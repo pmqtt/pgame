@@ -9,5 +9,5 @@ add_compile_options(-Wall -Wextra -Wpedantic)
 add_compile_options(-fsanitize=address)
 link_libraries(-fsanitize=address)
 
-add_executable(pgamelib main.cpp pgame.cpp)
+add_executable(pgamelib main.cpp  panimation.cpp  peventloop.cpp pwindow.cpp)
 target_link_libraries(pgamelib SDL2::SDL2)
