@@ -1,19 +1,19 @@
 #include "pgame.h"
 
-auto PAnimation::go_to(const std::array<int,2> &point, PEventLoop* loop) -> bool{
-    int current_x = _drawable->x();
-    int current_y = _drawable->y();
+auto PAnimation::go_to(const std::array<float,2> &point, PEventLoop* loop) -> bool{
+    float current_x = _drawable->x();
+    float current_y = _drawable->y();
 
     // Zielposition
-    int target_x = point[0];
-    int target_y = point[1];
+    float target_x = point[0];
+    float target_y = point[1];
 
     // Berechnen der Richtung und Distanz
     int dx = target_x - current_x;
     int dy = target_y - current_y;
     float distance = sqrt(dx*dx + dy*dy);
 
-    if(distance < 1) {
+    if(distance < 0.001) {
         return true; // Ziel erreicht
     }
 
@@ -27,16 +27,7 @@ auto PAnimation::go_to(const std::array<int,2> &point, PEventLoop* loop) -> bool
 
     // Aktualisierung der Position basierend auf vergangenen Ticks
 
-    _stepFrameX += move_x * loop->delta_time();
-    _stepFrameY += move_y * loop->delta_time();
-    if(std::abs(_stepFrameX) > 1){
-        _drawable->add(std::array<int,2>{ (int)_stepFrameX, 0 });
-        _stepFrameX = 0;
-    }
-    if(std::abs(_stepFrameY) > 1){
-        _drawable->add(std::array<int,2>{ 0, (int)_stepFrameY });
-        _stepFrameY = 0;
-    }
+    _drawable->add(std::array<float,2>{  move_x * (float)loop->delta_time(), move_y * (float)loop->delta_time() });
 
     return false;
 }
