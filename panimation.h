@@ -4,6 +4,7 @@
 
 #include "pprimitive.h"
 #include "ppath.h"
+#include "pdebug.h"
 
 class PEventLoop;
 
@@ -20,9 +21,9 @@ struct PAnimation{
 
         void draw(PEventLoop * loop,std::shared_ptr<SDL_Renderer> renderer);
 
-        virtual void animate(PEventLoop* loop) { }
-        virtual void animate(std::array<float,2> point,PEventLoop* loop) { }
-        virtual void animate_on_path(PEventLoop* loop) { }
+        virtual void animate(PEventLoop* loop) { P_UNUSED(loop); }
+        virtual void animate(std::array<float,2> point,PEventLoop* loop) { P_UNUSED(point); P_UNUSED(loop);}
+        virtual void animate_on_path(PEventLoop* loop) { P_UNUSED(loop); }
 
     private:
         auto go_to(const std::array<float,2> &point, PEventLoop* loop) -> bool;

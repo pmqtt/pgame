@@ -5,12 +5,14 @@
 #include <memory>
 #include <array>
 
+#include "pdebug.h"
+
 struct PDrawable{
     public:
         PDrawable(float x,float y) : _color({255,0,0,255}),_x(x),_y(y) {}
             
         virtual void draw(std::shared_ptr<SDL_Renderer> renderer) = 0;
-        virtual void add(const std::array<float,2> &v) { }
+        virtual void add(const std::array<float,2> &v) { P_UNUSED(v); }
 
         void change_color(const std::array<unsigned char,4> &color){
             _color = color;

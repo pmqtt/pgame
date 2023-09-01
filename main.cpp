@@ -1,5 +1,6 @@
 #include <iostream>
 #include "pgame.h"
+#include "pdebug.h"
 
 struct PressEscape : public PKeyDownListener{
     void on_event(PEventLoop* loop, SDL_Event event) override{
@@ -49,6 +50,7 @@ struct RectAnimation : public PAnimation{
     }
 
     void animate(PEventLoop* loop) override{
+        P_UNUSED(loop);
         float stepSize = 100 *loop->delta_time();
 
         if (direction == 0) {
@@ -85,11 +87,14 @@ struct PathAnimation : public PAnimation{
     }
 
     void animate(std::array<float,2> point,PEventLoop* loop) override{
+        P_UNUSED(point);
+        P_UNUSED(loop);
         _drawable->change_color({128,index,128,255});
         index = (index + 10) % 255;
     }
 
     void animate_on_path(PEventLoop* loop) override{
+        P_UNUSED(loop);
         _drawable->change_color({index2,index,128,255});
         index2 = (index2 + 13) % 255;
     }
@@ -99,6 +104,8 @@ struct PathAnimation : public PAnimation{
 };
 
 auto main(int argc,char **argv) -> int{
+    P_UNUSED(argc);
+    P_UNUSED(argv);
     PWindow window("PGame");
     PEventLoop loop = window.create_event_loop();
     loop.add_key_down_listener(std::make_shared<PressEscape>());
