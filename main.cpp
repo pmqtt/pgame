@@ -117,7 +117,11 @@ auto main(int argc,char **argv) -> int{
     loop.moveables()["player1"]->change_color({255,0,0,255});
     loop.add_animation("animation1",std::make_shared<RectAnimation>(
                                                         std::make_shared<PCircle>(50,50,8)));
- 
+
+
+    loop.add_moveable("player2",std::make_shared<PCircle>(500,500,64,true));
+    loop.moveables()["player2"]->change_color({0,255,128,255});
+
     PPath path;
     path.add(std::array<float,2>{200,200});
     path.add(std::array<float,2>{300,200});
@@ -126,6 +130,10 @@ auto main(int argc,char **argv) -> int{
     loop.add_animation("animation2",std::make_shared<PathAnimation>(
                                                         std::make_shared<PRect>(200,200,16,16),
                                                         std::make_shared<PPath>(path)));
+
+    loop.add_moveable("static1", std::make_shared<PRect>(200,200,4,4));
+    loop.add_moveable("static2", std::make_shared<PRect>(250,200,4,4));
+    loop.add_moveable("static3", std::make_shared<PRect>(300,200,4,4));
 
     loop.run();
     return 0;

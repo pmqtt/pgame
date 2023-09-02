@@ -1,5 +1,6 @@
 #include "panimation.h"
 #include "peventloop.h"
+#include <iostream>
 
 void PAnimation::draw(PEventLoop * loop,std::shared_ptr<SDL_Renderer> renderer){
     if(_path){
@@ -31,23 +32,34 @@ auto PAnimation::go_to(const std::array<float,2> &point, PEventLoop* loop) -> bo
     float target_y = point[1];
 
     // Berechnen der Richtung und Distanz
-    int dx = target_x - current_x;
-    int dy = target_y - current_y;
+    float dx = target_x - current_x;
+    float dy = target_y - current_y;
     float distance = sqrt(dx*dx + dy*dy);
 
-    if(distance < 0.001) {
+    if(distance < 1) {
         return true; // Ziel erreicht
     }
 
-    // Berechnen der Geschwindigkeit
-    float speed = 100;  // Geschwindigkeit pro Tick
+    float speed = 10; // Pixel pro Sekunde
 
     // Berechnen der Bewegung pro Tick
+
     float move_x = (speed * dx / distance);
     float move_y = (speed * dy / distance);
 
+    float new_x = current_x + move_x * loop->delta_time();
+    float new_y = current_y + move_y * loop->delta_time();
+    
+    float future_distance = sqrt((new_x - target_x)*(new_x - target_x) + (new_y - target_y)*(new_y - target_y));
 
-    // Aktualisierung der Position basierend auf vergangenen Ticks
+    // Überprüfung, ob das Ziel überschritten wird
+    if (future_distance > distance) {
+        // Bewegung auf die verbleibende Distanz beschränken
+        float remaining_distance = distance;
+        float ratio = remaining_distance / distance;
+        _drawable->add({ move_x * ratio * (float)loop->delta_time(), move_y * ratio * (float)loop->delta_time()});
+        return true; // Ziel erreicht
+    }
 
     _drawable->add(std::array<float,2>{  move_x * (float)loop->delta_time(), move_y * (float)loop->delta_time() });
 
