@@ -18,7 +18,22 @@
 #include "panimation.h"
 
 
+class PGame{
+    public:
+        PGame(){}
 
+        void init(){
+            _window = std::make_shared<PWindow>("PGame");
+            _event_loop = _window->create_event_loop();
+        }
+        
+        
+
+    private:
+        std::shared_ptr<PWindow> _window;
+        PEventLoop _event_loop;
+
+};
 
 
 

@@ -106,6 +106,7 @@ struct PathAnimation : public PAnimation{
 auto main(int argc,char **argv) -> int{
     P_UNUSED(argc);
     P_UNUSED(argv);
+
     PWindow window("PGame");
     PEventLoop loop = window.create_event_loop();
     loop.add_key_down_listener(std::make_shared<PressEscape>());

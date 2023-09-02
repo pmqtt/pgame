@@ -23,6 +23,7 @@ struct PKeyDownListener{
 
 class PEventLoop{
     public:
+        PEventLoop() = default;
         PEventLoop(std::shared_ptr<SDL_Window> _window, 
                   std::shared_ptr<SDL_Renderer> _renderer)
             : _window(_window), _renderer(_renderer){
