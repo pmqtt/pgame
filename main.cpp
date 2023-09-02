@@ -136,6 +136,9 @@ auto main(int argc,char **argv) -> int{
     loop.add_moveable("static2", std::make_shared<PRect>(250,200,4,4));
     loop.add_moveable("static3", std::make_shared<PRect>(300,200,4,4));
 
+    loop.add_moveable("iso1", std::make_shared<PCircleIso>(400,400,64,true));
+    loop.add_moveable("iso2", std::make_shared<PRectIso>(500,200,40,40,false));
+
     loop.run();
     return 0;
 }

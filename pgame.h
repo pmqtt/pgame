@@ -27,6 +27,9 @@ class PGame{
             _event_loop = _window->create_event_loop();
         }
         
+        void use_isometric_projection(){
+            
+        }
         
 
     private:

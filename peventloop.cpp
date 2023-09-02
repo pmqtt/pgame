@@ -6,9 +6,6 @@ void PEventLoop::run(){
     _animation_timer.start();
     while(!_quit){
         _delta_time = _animation_timer.delta_ticks();
-       // if(_delta_time < (1000.0/60.0)){
-          //  SDL_Delay((1000.0/60.0) - _delta_time);
-       // }
         while(SDL_PollEvent(&event)){
                 switch(event.type){
                 case SDL_QUIT:

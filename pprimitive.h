@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 #include <memory>
 #include <array>
+#include <vector>
 
 #include "pdebug.h"
 
@@ -11,25 +12,54 @@ static std::array<float,2> world_to_iso(float x, float y){
     return std::array<float,2>{std::abs(x-y),(std::abs(x+y))/(float)2.0};
 }
 
+enum class PPROJECTION{
+    ISOMETRIC,
+    CARTESIAN
+};
+
 struct PDrawable{
     public:
-        PDrawable(float x,float y, bool fill) : _color({255,0,0,255}),_x(x),_y(y),_fill(fill) {}
+        PDrawable(float x,float y, bool fill, PPROJECTION projection) : 
+            _color({255,0,0,255}),_x(x),_y(y),_fill(fill),_projection(projection) {
+                _changed = true;
+            }
             
-        virtual void draw(std::shared_ptr<SDL_Renderer> renderer){
+         void draw(std::shared_ptr<SDL_Renderer> renderer){
+            SDL_SetRenderDrawColor(renderer.get(), _color[0], _color[1], _color[2], _color[3]);
             if(_fill){
                 draw_fill(renderer);
             }
             else{
                 draw_empty(renderer);
             }
+            _changed = false;
         }
         virtual void add(const std::array<float,2> &v) { 
             _x += v[0];
             _y += v[1];
+            _changed = true;
         }
 
         virtual void draw_fill(std::shared_ptr<SDL_Renderer> renderer) = 0;
         virtual void draw_empty(std::shared_ptr<SDL_Renderer> renderer) = 0;
+        
+        void draw_line(std::shared_ptr<SDL_Renderer> renderer, float x1, float y1, float x2, float y2){
+            if(_projection == PPROJECTION::ISOMETRIC){
+                auto p1 = world_to_iso(x1,y1);
+                auto p2 = world_to_iso(x2,y2);
+                SDL_RenderDrawLineF(renderer.get(), p1[0], p1[1], p2[0], p2[1]);
+            }else{
+                SDL_RenderDrawLineF(renderer.get(), x1, y1, x2, y2);
+            }
+        }
+        void draw_point(std::shared_ptr<SDL_Renderer> renderer, float x, float y){
+            if(_projection == PPROJECTION::ISOMETRIC){
+                auto p = world_to_iso(x,y);
+                SDL_RenderDrawPointF(renderer.get(), p[0], p[1]);
+            }else{
+                SDL_RenderDrawPointF(renderer.get(), x, y);
+            }
+        }
 
         void change_color(const std::array<unsigned char,4> &color){
             _color = color;
@@ -45,6 +75,7 @@ struct PDrawable{
         
         void fill(bool fill){
             _fill = fill;
+            _changed = true;
         }
 
         auto fill() const -> bool{
@@ -57,13 +88,15 @@ struct PDrawable{
         float _x;
         float _y;
         bool _fill;
+        PPROJECTION _projection;
+        bool _changed;
 
 };
 
 struct PRect : public PDrawable{
     public:
         PRect(float x, float y, float w, float h, bool fill = false)
-            : PDrawable(x,y,fill), w(w), h(h){
+            : PDrawable(x,y,fill,PPROJECTION::CARTESIAN), w(w), h(h){
         }
 
         void draw_fill(std::shared_ptr<SDL_Renderer> renderer) override{
@@ -72,16 +105,14 @@ struct PRect : public PDrawable{
             rect.y = _y;
             rect.w = w;
             rect.h = h;
-            SDL_SetRenderDrawColor(renderer.get(), _color[0], _color[1], _color[2], _color[3]);
             SDL_RenderFillRectF(renderer.get(), &rect);
         }
 
         void draw_empty(std::shared_ptr<SDL_Renderer> renderer) override{
-            SDL_SetRenderDrawColor(renderer.get(), _color[0], _color[1], _color[2], _color[3]);
-            SDL_RenderDrawLineF(renderer.get(), _x, _y, _x+w, _y);
-            SDL_RenderDrawLineF(renderer.get(), _x+w, _y, _x+w, _y+h);
-            SDL_RenderDrawLineF(renderer.get(), _x+w, _y+h, _x, _y+h);
-            SDL_RenderDrawLineF(renderer.get(), _x, _y+h, _x, _y);
+            draw_line(renderer, _x, _y, _x+w, _y);
+            draw_line(renderer, _x+w, _y, _x+w, _y+h);
+            draw_line(renderer, _x+w, _y+h, _x, _y+h);
+            draw_line(renderer, _x, _y+h, _x, _y);
         }
         
 
@@ -89,10 +120,18 @@ struct PRect : public PDrawable{
         float  w, h;
 };
 
+struct PRectIso: public PRect{
+    PRectIso(float x, float y, float w, float h, bool fill = false)
+        : PRect(x,y,w,h,fill){
+            _projection = PPROJECTION::ISOMETRIC;
+        }
+};
+
+
 struct PCircle : public PDrawable{
     public:
         PCircle(float x, float y, float r, bool fill = false)
-            : PDrawable(x,y,fill), r(r) {
+            : PDrawable(x,y,fill,PPROJECTION::CARTESIAN), r(r) {
         }
 
         void draw_empty(std::shared_ptr<SDL_Renderer> renderer) override{
@@ -105,25 +144,34 @@ struct PCircle : public PDrawable{
                 angle += angleStep;
                 float x2 = _x + r * cos(angle);
                 float y2 = _y + r * sin(angle);
-                SDL_RenderDrawLineF(renderer.get(), x1, y1, x2, y2);
+                draw_line(renderer, x1, y1, x2, y2);
             }
         }
 
         void draw_fill(std::shared_ptr<SDL_Renderer> renderer) override{
-            for (float y = _y - r; y <= _y + r; y+=0.1){
-                for (float x = _x - r; x <= _x + r; x +=0.1){
+            for (float y = _y - r; y <= _y + r; y+=1){
+                for (float x = _x - r; x <= _x + r; x +=1){
                     float dx = x - _x;
                     float dy = y - _y;
                     if (dx * dx + dy * dy <= r * r){
-                        SDL_RenderDrawPointF(renderer.get(), x, y);
+                        draw_point(renderer, x, y);
                     }
                 }
             }
         }
 
+
     private:
         float r;
         bool _fill;
 };
+
+struct PCircleIso : public PCircle{
+    PCircleIso(float x, float y, float r, bool fill = false)
+        : PCircle(x,y,r,fill){
+            _projection = PPROJECTION::ISOMETRIC;
+        }
+};
+
 
 #endif
