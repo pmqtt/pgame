@@ -79,3 +79,4 @@ test/bin/
 *.lo
 *.la
 .DS_Store
+Makefile
