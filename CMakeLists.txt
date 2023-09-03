@@ -11,5 +11,5 @@ link_libraries(-fsanitize=address)
 add_library(pgame STATIC panimation.cpp  peventloop.cpp pwindow.cpp)
 
 
-add_executable(core_test_0001 main.cpp)
+add_executable(core_test_0001 core_test_0001.cpp)
 target_link_libraries(core_test_0001 SDL2::SDL2 pgame)
