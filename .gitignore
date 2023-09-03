@@ -1,0 +1,81 @@
+# Compiled object files
+*.o
+*.obj
+*.so
+*.dll
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.dylib
+*.so
+
+# Compiled Static libraries
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+
+# IDE files (Visual Studio, etc.)
+*.sln
+*.suo
+*.user
+*.userosscache
+*.sdf
+*.opensdf
+*.opendb
+*.VC.db
+*.VC.opendb
+*.VC.VC.opendb
+*.db
+*.jfm
+*.ipch
+*.VC.db
+*.VC.VC.db
+*.idb
+*.pdb
+*.exe.manifest
+*.ilk
+*.aps
+*.ncb
+*.opt
+*.plg
+*.bsc
+*.sbr
+*.pri
+*.bak
+*.bak2
+*.db
+*.ilk
+*.exp
+*.exps
+*.lib
+*.libs
+*.res
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+CTestTestfile.cmake.in
+*.cmake
+
+# Test binaries
+test/bin/
+
+# Miscellaneous
+*.swp
+*.bak
+*.tmp
+*.swo
+*.lo
+*.la
+.DS_Store
