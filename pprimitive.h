@@ -83,12 +83,11 @@ struct PRect : public PDrawable{
         }
 
         void draw_fill(std::shared_ptr<SDL_Renderer> renderer) override{
-            SDL_FRect rect;
-            rect.x = _x;
-            rect.y = _y;
-            rect.w = w;
-            rect.h = h;
-            SDL_RenderFillRectF(renderer.get(), &rect);
+            for(float y = _y; y < _y + h; y+=1){
+                for(float x = _x; x < _x + w; x+=1){
+                    draw_point(renderer, x, y);
+                }
+            }
         }
 
         void draw_empty(std::shared_ptr<SDL_Renderer> renderer) override{

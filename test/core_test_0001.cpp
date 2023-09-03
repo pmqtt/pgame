@@ -95,8 +95,8 @@ struct PathAnimation : public PAnimation{
 
     void animate_on_path(PEventLoop* loop) override{
         P_UNUSED(loop);
-        _drawable->change_color({index2,index,128,255});
-        index2 = (index2 + 13) % 255;
+        //_drawable->change_color({index2,index,128,255});
+        //index2 = (index2 + 13) % 255;
     }
 
     unsigned char index;
@@ -137,7 +137,7 @@ auto main(int argc,char **argv) -> int{
     loop.add_moveable("static3", std::make_shared<PRect>(300,200,4,4));
 
     loop.add_moveable("iso1", std::make_shared<PCircleIso>(400,400,64,true));
-    loop.add_moveable("iso2", std::make_shared<PRectIso>(500,200,40,40,false));
+    loop.add_moveable("iso2", std::make_shared<PRectIso>(500,200,40,40,true));
 
     loop.run();
     return 0;
