@@ -28,3 +28,4 @@ function(add_core_test TEST_NAME)
 endfunction()
 
 add_core_test(core_test_0001)
+add_core_test(core_test_0002)
