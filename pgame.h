@@ -16,6 +16,7 @@
 #include "pwindow.h"
 #include "peventloop.h"
 #include "panimation.h"
+#include "pphysic.h"
 
 
 class PGame{

@@ -22,6 +22,9 @@ void PEventLoop::run(){
         }
         SDL_SetRenderDrawColor(_renderer.get(), 0, 0, 0, 255);
         SDL_RenderClear(_renderer.get());
+        for(auto physic : _physic_objects){
+            physic.second->move(_delta_time);
+        }
         for(auto moveable : _moveables){
             moveable.second->draw(_renderer);
         }

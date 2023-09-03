@@ -10,6 +10,7 @@
 #include "ptimer.h"
 #include "pprimitive.h"
 #include "panimation.h"
+#include "pphysic.h"
 
 class PEventLoop;
 
@@ -45,6 +46,15 @@ class PEventLoop{
             return _moveables;
         }
 
+        auto physics_objects()const -> std::map<std::string, std::shared_ptr<PPhysicObject>>{
+            return _physic_objects;
+        }
+
+        void add_physics_object(const std::string & name, std::shared_ptr<PPhysicObject> physic){
+            _physic_objects[name] = physic;
+            _moveables["physic_" + name] = physic->drawable();
+        }
+
         void add_moveable(const std::string & name, std::shared_ptr<PDrawable> moveable){
             _moveables[name] = moveable;
         }
@@ -73,6 +83,7 @@ class PEventLoop{
         std::shared_ptr<SDL_Renderer> _renderer;
         std::map<std::string, std::shared_ptr<PDrawable>> _moveables;
         std::map<std::string, std::shared_ptr<PAnimation>> _animations;
+        std::map<std::string, std::shared_ptr<PPhysicObject>> _physic_objects;
         PTimer _animation_timer;
         double _delta_time;
 };
