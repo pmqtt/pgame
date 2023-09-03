@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 add_compile_options(-Wall -Wextra -Wpedantic)
 add_compile_options(-fsanitize=address)
 link_libraries(-fsanitize=address)
-add_library(pgame STATIC panimation.cpp  peventloop.cpp pwindow.cpp)
+add_library(pgame STATIC panimation.cpp peventloop.cpp pwindow.cpp)
 
 
 function(add_core_test TEST_NAME)
