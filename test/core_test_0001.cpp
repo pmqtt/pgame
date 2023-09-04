@@ -132,9 +132,11 @@ auto main(int argc,char **argv) -> int{
                                                         std::make_shared<PRect>(200,200,16,16),
                                                         std::make_shared<PPath>(path)));
 
-    loop.add_moveable("static1", std::make_shared<PRect>(200,200,4,4));
+    loop.add_moveable("static1", std::make_shared<PRect>(200,200,128,256,false));
     loop.add_moveable("static2", std::make_shared<PRect>(250,200,4,4));
     loop.add_moveable("static3", std::make_shared<PRect>(300,200,4,4));
+   
+    loop.moveables()["static1"]->rotate(22);
 
     loop.add_moveable("iso1", std::make_shared<PCircleIso>(400,400,64,true));
     loop.add_moveable("iso2", std::make_shared<PRectIso>(500,200,40,40,true));

@@ -23,7 +23,7 @@ auto main(int argc, char** argv) -> int{
     object->set_velocity(30,0.001);
     object->set_restitution(0.6);
 
-    object->set_velocity_direction(M_PI);
+    object->set_velocity_direction(2*M_PI);
     event_loop.add_physics_object("obj", object);
 
     auto object2 = std::make_shared<PPhysicObject>(std::make_shared<PRect>(0,510,800,100,false));

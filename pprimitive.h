@@ -65,6 +65,12 @@ struct PDrawable{
         virtual auto bounding_box() const -> std::array<float,4> = 0;
         virtual auto bounding_circle() const -> std::array<float,3> = 0;
 
+        void rotate(float angle){
+            auto box = bounding_box();
+            _strategy->rotate(angle,box);
+        };
+        
+
 
     protected:
         std::array<unsigned char,4> _color;
@@ -107,7 +113,6 @@ struct PRect : public PDrawable{
         auto bounding_circle() const -> std::array<float,3> override{
             return {_x+w/2, _y+h/2, std::sqrt(w*w+h*h)/2};
         }
-        
 
     private:
         float  w, h;

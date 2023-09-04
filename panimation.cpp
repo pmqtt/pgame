@@ -40,7 +40,7 @@ auto PAnimation::go_to(const std::array<float,2> &point, PEventLoop* loop) -> bo
         return true; // Ziel erreicht
     }
 
-    float speed = 10; // Pixel pro Sekunde
+    float speed = 40; // Pixel pro Sekunde
 
     // Berechnen der Bewegung pro Tick
 
