@@ -85,14 +85,21 @@ struct PSatColider : PColider{
         const float p1_w = A[2];
         const float p1_w2 = p1_w / 2;
         const float p1_h2 = p1_h / 2;
-        const float p1_center_x = A[0] + p1_w2;
-        const float p1_center_y = A[1] + p1_h2;
+        const float p1_center_xx = A[0] + p1_w2;
+        const float p1_center_yy = A[1] + p1_h2;
+        const auto p1_center = rotate_middpoint(A,p1_center_xx,p1_center_yy,angle_p1_rad);
+        const float p1_center_x = p1_center[0];
+        const float p1_center_y = p1_center[1];
+
         const float p2_h = B[3];
         const float p2_w = B[2];
         const float p2_w2 = p2_w / 2;
         const float p2_h2 = p2_h / 2;
-        const float p2_center_x = B[0] + p2_w2;
-        const float p2_center_y = B[1] + p2_h2;
+        const float p2_center_xx = B[0] + p2_w2;
+        const float p2_center_yy = B[1] + p2_h2;
+        const auto p2_center = rotate_middpoint(B,p2_center_xx,p2_center_yy,angle_p2_rad);
+        const float p2_center_x = p2_center[0];
+        const float p2_center_y = p2_center[1];
 
         const PVertices2D verticesA = create_vertices(p1_center_x,p1_center_y,p1_w2,p1_h2,angle_p1_rad);
         const PVertices2D verticesB = create_vertices(p2_center_x,p2_center_y,p2_w2,p2_h2,angle_p2_rad);
@@ -103,6 +110,14 @@ struct PSatColider : PColider{
             }
         }
         return true;
+    }
+
+    auto rotate_middpoint(const std::array<float,4> &box,float x, float y, float rad) const -> std::array<float,2>{
+        const float xc =  box[0];
+        const float yc =  box[1];
+        const float xr = (x - xc) * cos(rad) - (y - yc) * sin(rad) + xc;
+        const float yr = (x - xc) * sin(rad) + (y - yc) * cos(rad) + yc;
+        return {{xr,yr}};
     }
 
     PVertices2D create_vertices(float p1_center_x,float p1_center_y,float p1_w2,float p1_h2,float angle_p1_rad)const{

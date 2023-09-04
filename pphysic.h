@@ -50,7 +50,7 @@ class PPhysicObject {
         void colide(std::shared_ptr<PPhysicObject> other){
             if(_colider){
                _colide =  _colider->colide(_drawable,other->_drawable);
-               _colide_point = std::array<float,2>{other->_drawable->x(),other->_drawable->y()};
+               _colide_point = std::array<float,2>{_drawable->x(),_drawable->y()};
             }else{
                 _colide = false;
             }
@@ -62,9 +62,8 @@ class PPhysicObject {
             }
             if( _colide ){
                 _velocity[1] = _velocity[1] * -1 * _restition;
-                std::cout<<"COLIDER_VELOCITY: "<<_velocity[1]<<std::endl;
                 auto box = _drawable->bounding_box();
-                _drawable->add(std::array<float,2>{0,_colide_point[1] - box[1] - box[3] -0.001f});
+               _drawable->add(std::array<float,2>{0,-1.0f});
                 
             }else{
                 _velocity[1] += _gravity * delta_time;
@@ -74,8 +73,6 @@ class PPhysicObject {
                 _velocity[0] = 0;
             }
 
-
-            std::cout<<"vel: "<<_velocity[1]<<std::endl;
             float x = _velocity[0] * delta_time;
             float y = _velocity[1] * delta_time;
             
