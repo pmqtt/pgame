@@ -14,7 +14,7 @@ struct PDrawable{
         PDrawable(float x,float y, bool fill, std::shared_ptr<PDrawStrategy> strategy) :
             _color({255,0,0,255}),
             _x(x),_y(y),_fill(fill),
-            _strategy(strategy),_changed(true)
+            _strategy(strategy),_changed(true),
             _angle(0){ 
         }
             
