@@ -12,8 +12,11 @@
 struct PDrawable{
     public:
         PDrawable(float x,float y, bool fill, std::shared_ptr<PDrawStrategy> strategy) :
-            _color({255,0,0,255}),_x(x),_y(y),_fill(fill),_strategy(strategy),_changed(true){ 
-            }
+            _color({255,0,0,255}),
+            _x(x),_y(y),_fill(fill),
+            _strategy(strategy),_changed(true)
+            _angle(0){ 
+        }
             
          void draw(std::shared_ptr<SDL_Renderer> renderer){
             SDL_SetRenderDrawColor(renderer.get(), _color[0], _color[1], _color[2], _color[3]);
@@ -67,9 +70,13 @@ struct PDrawable{
 
         void rotate(float angle){
             auto box = bounding_box();
+            _angle = angle;
             _strategy->rotate(angle,box);
         };
         
+        auto angle() const -> float{
+            return _angle;
+        }
 
 
     protected:
@@ -79,6 +86,7 @@ struct PDrawable{
         bool _fill;
         std::shared_ptr<PDrawStrategy> _strategy;
         bool _changed;
+        float _angle;
 
 };
 

@@ -19,31 +19,31 @@ class PPhysicObject {
         virtual ~PPhysicObject() = default;
         
         //Set the gravity for this object in pixels per second
-        void set_gravity(float gravity){
+        void gravity(float gravity){
             _gravity = gravity;
         }
         
         // Set the velocity for this object in pixels per second
-        void set_velocity(float x, float y){
+        void velocity(float x, float y){
             _velocity[0] = x;
             _velocity[1] = y;
         }
 
-        void add_velocity(const std::array<float,2> &v){
+        void velocity(const std::array<float,2> &v){
             _velocity[0] += v[0];
             _velocity[1] += v[1];
         }
 
-        void set_acceleration(float value){
+        void acceleration(float value){
             _acceleration = value;;
         }
 
         // Set the velocity direction for this object in degrees
-        void set_velocity_direction(float direction){
+        void velocity_direction(float direction){
             _velocity_direction = direction;
         }
 
-        void set_restitution(float value){
+        void restitution(float value){
             _restition = value;
         }
 
