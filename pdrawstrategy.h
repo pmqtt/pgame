@@ -32,11 +32,11 @@ class PDrawCartesianStrategy : public PDrawStrategy{
         ~PDrawCartesianStrategy() = default;
         void draw_point(std::shared_ptr<SDL_Renderer> renderer, float x, float y) override{
             if(_rotate){
-                double rad = _angle * M_PI / 180.0;
-                float xc = _box[0];
-                float yc = _box[1];
-                float xr = (x - xc) * cos(rad) - (y - yc) * sin(rad) + xc;
-                float yr = (x - xc) * sin(rad) + (y - yc) * cos(rad) + yc;
+                const float rad = _angle * M_PI / 180.0;
+                const float xc = _box[0];
+                const float yc = _box[1];
+                const float xr = (x - xc) * cos(rad) - (y - yc) * sin(rad) + xc;
+                const float yr = (x - xc) * sin(rad) + (y - yc) * cos(rad) + yc;
                 SDL_RenderDrawPointF(renderer.get(), xr, yr);
                 SDL_RenderDrawPointF(renderer.get(), xr+1, yr);
                 SDL_RenderDrawPointF(renderer.get(), xr-1, yr);
@@ -49,13 +49,13 @@ class PDrawCartesianStrategy : public PDrawStrategy{
         }
         void draw_line(std::shared_ptr<SDL_Renderer> renderer, float x1, float y1, float x2, float y2) override{
            if(_rotate){
-                double rad = _angle * M_PI / 180.0;
-                float xc = _box[0];
-                float yc = _box[1];
-                float xr1 = (x1 - xc) * cos(rad) - (y1 - yc) * sin(rad) + xc;
-                float yr1 = (x1 - xc) * sin(rad) + (y1 - yc) * cos(rad) + yc;
-                float xr2 = (x2 - xc) * cos(rad) - (y2 - yc) * sin(rad) + xc;
-                float yr2 = (x2 - xc) * sin(rad) + (y2 - yc) * cos(rad) + yc;
+                const double rad = _angle * M_PI / 180.0;
+                const float xc = _box[0];
+                const float yc = _box[1];
+                const float xr1 = (x1 - xc) * cos(rad) - (y1 - yc) * sin(rad) + xc;
+                const float yr1 = (x1 - xc) * sin(rad) + (y1 - yc) * cos(rad) + yc;
+                const float xr2 = (x2 - xc) * cos(rad) - (y2 - yc) * sin(rad) + xc;
+                const float yr2 = (x2 - xc) * sin(rad) + (y2 - yc) * cos(rad) + yc;
                 SDL_RenderDrawLineF(renderer.get(), xr1, yr1, xr2, yr2);
            }else{
             SDL_RenderDrawLineF(renderer.get(), x1, y1, x2, y2);
@@ -68,12 +68,12 @@ class PDrawIsometricStrategy: public PDrawStrategy{
         PDrawIsometricStrategy() = default;
         ~PDrawIsometricStrategy() = default;
         void draw_point(std::shared_ptr<SDL_Renderer> renderer, float x, float y) override{
-            auto p = world_to_iso(x,y);
+            const auto p = world_to_iso(x,y);
             SDL_RenderDrawPointF(renderer.get(), p[0], p[1]);
         }
         void draw_line(std::shared_ptr<SDL_Renderer> renderer, float x1, float y1, float x2, float y2) override{
-            auto p1 = world_to_iso(x1,y1);
-            auto p2 = world_to_iso(x2,y2);
+            const auto p1 = world_to_iso(x1,y1);
+            const auto p2 = world_to_iso(x2,y2);
             SDL_RenderDrawLineF(renderer.get(), p1[0], p1[1], p2[0], p2[1]);
         }
 };
