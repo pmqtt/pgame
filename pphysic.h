@@ -28,6 +28,11 @@ class PPhysicObject {
             _velocity[1] = y;
         }
 
+        void add_velocity(std::array<float,2> v){
+            _velocity[0] += v[0];
+            _velocity[1] += v[1];
+        }
+
         // Set the velocity direction for this object in degrees
         void set_velocity_direction(float direction){
             _velocity_direction = direction;

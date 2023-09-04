@@ -9,6 +9,14 @@ struct PressEscape : public PKeyDownListener{
     }
 };
 
+struct PressRight : public PKeyDownListener{
+    void on_event(PEventLoop* loop, SDL_Event event){
+        if(event.key.keysym.sym == SDLK_RIGHT){
+            loop->physics_objects()["obj"]->add_velocity(std::array<float,2>{10,0});
+        }
+    }
+};
+
 
 
 auto main(int argc, char** argv) -> int{
@@ -17,6 +25,7 @@ auto main(int argc, char** argv) -> int{
     PWindow window("PGame",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,1200,600);
     auto event_loop = window.create_event_loop();
     event_loop.add_key_down_listener(std::make_shared<PressEscape>());
+    event_loop.add_key_down_listener(std::make_shared<PressRight>());
     auto drawable = std::make_shared<PRect>(200,0,10,10);
     auto object = std::make_shared<PPhysicObject>(drawable,std::make_shared<PBoxColider>());
     object->set_gravity(98.1);
