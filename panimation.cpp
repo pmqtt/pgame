@@ -24,33 +24,33 @@ void PAnimation::draw(PEventLoop * loop,std::shared_ptr<SDL_Renderer> renderer){
 }
 
 auto PAnimation::go_to(const std::array<float,2> &point, PEventLoop* loop) -> bool{
-    float current_x = _drawable->x();
-    float current_y = _drawable->y();
+    const float current_x = _drawable->x();
+    const float current_y = _drawable->y();
 
     // Zielposition
-    float target_x = point[0];
-    float target_y = point[1];
+    const float target_x = point[0];
+    const float target_y = point[1];
 
     // Berechnen der Richtung und Distanz
-    float dx = target_x - current_x;
-    float dy = target_y - current_y;
-    float distance = sqrt(dx*dx + dy*dy);
+    const float dx = target_x - current_x;
+    const float dy = target_y - current_y;
+    const float distance = sqrt(dx*dx + dy*dy);
 
     if(distance < 1) {
         return true; // Ziel erreicht
     }
 
-    float speed = 40; // Pixel pro Sekunde
+    const float speed = 40; // Pixel pro Sekunde
 
     // Berechnen der Bewegung pro Tick
 
-    float move_x = (speed * dx / distance);
-    float move_y = (speed * dy / distance);
+    const float move_x = (speed * dx / distance);
+    const float move_y = (speed * dy / distance);
 
-    float new_x = current_x + move_x * loop->delta_time();
-    float new_y = current_y + move_y * loop->delta_time();
+    const float new_x = current_x + move_x * loop->delta_time();
+    const float new_y = current_y + move_y * loop->delta_time();
     
-    float future_distance = sqrt((new_x - target_x)*(new_x - target_x) + (new_y - target_y)*(new_y - target_y));
+    const float future_distance = sqrt((new_x - target_x)*(new_x - target_x) + (new_y - target_y)*(new_y - target_y));
 
     // Überprüfung, ob das Ziel überschritten wird
     if (future_distance > distance) {
