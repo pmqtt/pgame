@@ -12,7 +12,7 @@ struct PressEscape : public PKeyDownListener{
 struct PressRight : public PKeyDownListener{
     void on_event(PEventLoop* loop, SDL_Event event){
         if(event.key.keysym.sym == SDLK_RIGHT){
-            loop->physics_objects()["obj"]->add_velocity(std::array<float,2>{10,0});
+            loop->physics_objects()["obj"]->set_acceleration(-4.0f);
         }
     }
 };
