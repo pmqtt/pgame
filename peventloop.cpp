@@ -22,6 +22,14 @@ void PEventLoop::run(){
         }
         SDL_SetRenderDrawColor(_renderer.get(), 0, 0, 0, 255);
         SDL_RenderClear(_renderer.get());
+        for(auto iter = _physic_objects.begin(); iter != _physic_objects.end(); ++iter){
+            for(auto sIter = std::next(iter); sIter != _physic_objects.end(); ++sIter){
+                if(iter != sIter){
+                    iter->second->colide(sIter->second);
+                }
+            }
+        }
+
         for(auto physic : _physic_objects){
             physic.second->move(_delta_time);
         }

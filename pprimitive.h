@@ -62,8 +62,8 @@ struct PDrawable{
             return _fill;
         }
 
-        virtual auto bounding_box() const -> std::array<float,4>;
-        virtual auto bounding_circle() const -> std::array<float,3>;
+        virtual auto bounding_box() const -> std::array<float,4> = 0;
+        virtual auto bounding_circle() const -> std::array<float,3> = 0;
 
 
     protected:
@@ -101,7 +101,7 @@ struct PRect : public PDrawable{
         }
 
         auto bounding_box() const -> std::array<float,4> override{
-            return {_x, _y, _x+w, _y+h};
+            return {_x, _y, w, h};
         }
 
         auto bounding_circle() const -> std::array<float,3> override{
@@ -156,7 +156,7 @@ struct PCircle : public PDrawable{
         }
 
         auto bounding_box() const -> std::array<float,4> override{
-            return {_x-r, _y-r, _x+r+r, _y+r+r};
+            return {_x-r, _y-r, r+r, r+r};
         }
 
         auto bounding_circle() const -> std::array<float,3> override{
