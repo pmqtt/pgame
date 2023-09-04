@@ -28,7 +28,7 @@ class PPhysicObject {
             _velocity[1] = y;
         }
 
-        void add_velocity(std::array<float,2> v){
+        void add_velocity(const std::array<float,2> &v){
             _velocity[0] += v[0];
             _velocity[1] += v[1];
         }

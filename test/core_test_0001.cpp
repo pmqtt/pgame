@@ -86,7 +86,7 @@ struct PathAnimation : public PAnimation{
         index2 = 0;
     }
 
-    void animate(std::array<float,2> point,PEventLoop* loop) override{
+    void animate(const std::array<float,2> &point,PEventLoop* loop) override{
         P_UNUSED(point);
         P_UNUSED(loop);
         _drawable->change_color({128,index,128,255});
