@@ -5,7 +5,7 @@
 void PAnimation::draw(PEventLoop * loop,std::shared_ptr<SDL_Renderer> renderer){
     if(_path){
         if(static_cast<std::size_t>(_path_index) < _path->points().size()){
-            bool point_arrived = go_to(_path->points().at(_path_index), loop);
+            const bool point_arrived = go_to(_path->points().at(_path_index), loop);
             if(point_arrived){
                 animate(_path->points().at(_path_index), loop);    
                 _path_index++;
