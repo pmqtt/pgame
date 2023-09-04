@@ -27,7 +27,7 @@ auto main(int argc, char** argv) -> int{
     event_loop.add_key_down_listener(std::make_shared<PressEscape>());
     event_loop.add_key_down_listener(std::make_shared<PressRight>());
     auto drawable = std::make_shared<PRect>(200,0,10,10);
-    auto object = std::make_shared<PPhysicObject>(drawable,std::make_shared<PBoxColider>());
+    auto object = std::make_shared<PPhysicObject>(drawable,std::make_shared<PSatColider>());
     object->gravity(98.1);
     object->velocity(30,0.001);
     object->restitution(0.6);

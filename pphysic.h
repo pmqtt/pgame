@@ -62,6 +62,7 @@ class PPhysicObject {
             }
             if( _colide ){
                 _velocity[1] = _velocity[1] * -1 * _restition;
+                std::cout<<"COLIDER_VELOCITY: "<<_velocity[1]<<std::endl;
                 auto box = _drawable->bounding_box();
                 _drawable->add(std::array<float,2>{0,_colide_point[1] - box[1] - box[3] -0.001f});
                 
@@ -74,8 +75,10 @@ class PPhysicObject {
             }
 
 
+            std::cout<<"vel: "<<_velocity[1]<<std::endl;
             float x = _velocity[0] * delta_time;
             float y = _velocity[1] * delta_time;
+            
             _drawable->add(std::array<float,2>{x,y});
         }
 

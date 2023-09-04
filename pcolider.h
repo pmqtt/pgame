@@ -65,4 +65,81 @@ struct PCircleColider : public PColider{
 };
 
 
+using PVertices2D = std::array<std::array<float,2>,4>;
+
+struct PSatColider : PColider{
+    
+    auto colide(std::shared_ptr<PDrawable> p1, std::shared_ptr<PDrawable> p2) const -> bool override{
+        const float angle_p1_rad = p1->angle() * M_PI / 180;
+        const float angle_p2_rad = p2->angle() * M_PI / 180;
+        const PVertices2D axes = {{
+            {{ cos(angle_p1_rad), sin(angle_p1_rad)  }},
+            {{ (float)-sin(angle_p1_rad), (float)cos(angle_p1_rad) }} ,
+            {{ cos(angle_p2_rad), sin(angle_p2_rad)  }},
+            {{ -sin(angle_p2_rad), cos(angle_p2_rad) }} 
+        }};
+
+        const auto A = p1->bounding_box();
+        const auto B = p2->bounding_box();
+        const float p1_h = A[3];
+        const float p1_w = A[2];
+        const float p1_w2 = p1_w / 2;
+        const float p1_h2 = p1_h / 2;
+        const float p1_center_x = A[0] + p1_w2;
+        const float p1_center_y = A[1] + p1_h2;
+        const float p2_h = B[3];
+        const float p2_w = B[2];
+        const float p2_w2 = p2_w / 2;
+        const float p2_h2 = p2_h / 2;
+        const float p2_center_x = B[0] + p2_w2;
+        const float p2_center_y = B[1] + p2_h2;
+
+        const PVertices2D verticesA = create_vertices(p1_center_x,p1_center_y,p1_w2,p1_h2,angle_p1_rad);
+        const PVertices2D verticesB = create_vertices(p2_center_x,p2_center_y,p2_w2,p2_h2,angle_p2_rad);
+
+        for (auto axis : axes) {
+            if (is_separating_axis(axis, verticesA, verticesB)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    PVertices2D create_vertices(float p1_center_x,float p1_center_y,float p1_w2,float p1_h2,float angle_p1_rad)const{
+        return {{
+            {{p1_center_x + cos(angle_p1_rad) * p1_w2 - sin(angle_p1_rad) * p1_h2, p1_center_y + sin(angle_p1_rad) * p1_w2 + cos(angle_p1_rad) * p1_h2}},
+            {{p1_center_x - cos(angle_p1_rad) * p1_w2 - sin(angle_p1_rad) * p1_h2, p1_center_y - sin(angle_p1_rad) * p1_w2 + cos(angle_p1_rad) * p1_h2}},
+            {{p1_center_x - cos(angle_p1_rad) * p1_w2 + sin(angle_p1_rad) * p1_h2, p1_center_y - sin(angle_p1_rad) * p1_w2 - cos(angle_p1_rad) * p1_h2}},
+            {{p1_center_x + cos(angle_p1_rad) * p1_w2 + sin(angle_p1_rad) * p1_h2, p1_center_y + sin(angle_p1_rad) * p1_w2 - cos(angle_p1_rad) * p1_h2}}
+        }};
+    }
+
+    auto is_separating_axis(const std::array<float,2> & axis, 
+                            const PVertices2D & verticesA, const PVertices2D & verticesB)const -> bool{
+        float minA = INFINITY, maxA = -INFINITY;
+        float minB = INFINITY, maxB = -INFINITY;
+
+        for(const auto & vertex : verticesA){
+            const auto projection = axis[0] * vertex[0] + axis[1] * vertex[1];
+            minA = std::min(minA, projection);
+            maxA = std::max(maxA, projection);
+        }
+
+        for(const auto & vertex : verticesB){
+            const auto projection = axis[0] * vertex[0] + axis[1] * vertex[1];
+            minB = std::min(minB, projection);
+            maxB = std::max(maxB, projection);
+        }
+
+        if (maxA < minB || maxB < minA) {
+            return true;
+        }
+
+        return false;
+    }     
+
+
+};
+
+
 #endif
