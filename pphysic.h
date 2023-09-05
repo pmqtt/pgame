@@ -7,25 +7,32 @@
 
 class PPhysicObject;
 
+static int id = 0;
+
 struct PColision{
-    PColision( std::array<float,2> point, float direction_angle, std::shared_ptr<PPhysicObject> colide_with) :
-        point(point), direction_angle(direction_angle), colide_with(colide_with){
+    PColision( const std::array<float,2> & point, float direction_angle, std::shared_ptr<PPhysicObject> colide_with, const std::array<float,2> & normals) :
+        point(point), direction_angle(direction_angle), colide_with(colide_with), normals(normals), handled(false){
+        name = "colision_" + std::to_string(id++);
     }
     std::array<float,2> point;
     float direction_angle;
     std::shared_ptr<PPhysicObject> colide_with;
+    std::array<float,2> normals;
+    bool handled;
+    std::string name;
+
 };
 
 class PPhysicObject {
     public:
         PPhysicObject(std::shared_ptr<PDrawable> drawable) :
-            _drawable(drawable), _gravity(0),_velocity{0,0},_velocity_direction(0),_restition(1),_acceleration(0){
+            _drawable(drawable), _gravity(0),_velocity{0,0},_velocity_direction(0),_restition(1),_acceleration(0),_colision(nullptr){
                 _colide = false;
 
         }
         
         PPhysicObject(std::shared_ptr<PDrawable> drawable, std::shared_ptr<PColider> colider) :
-            _drawable(drawable), _gravity(0.0),_velocity{0,0},_velocity_direction(0),_restition(1),_colider(colider){
+            _drawable(drawable), _gravity(0.0),_velocity{0,0},_velocity_direction(0),_restition(1),_colider(colider),_colision(nullptr){
                 _colide = false;
         }
 
@@ -61,42 +68,56 @@ class PPhysicObject {
             _restition = value;
         }
 
-        //TODO:
-        // store direction_this and compare with previous direction_this to see if bouncing effect
-        // create a colision object that stores the colision point and the direction_this of the colision...
-        void colide(std::shared_ptr<PPhysicObject> other){
+        auto collision_detected()const{
+            return _colide;
+        }
+
+        auto colide(std::shared_ptr<PPhysicObject> other) -> bool {
             if(_colider){
                _colide =  _colider->colide(_drawable,other->_drawable);
                if(_colide){
-                   if(_colide_with == other){
+                   if(_colision && _colision->colide_with == other && _colision->handled){
                         float direction_this = velocity_direction();
-                        if(P_DIRECTION::P_UP == angle_to_direction(direction_this)){
+                        if(angle_to_direction(_colision->direction_angle) != angle_to_direction(direction_this)){
                             _colide = false;
-                            return;
+                            return true;
                         }
                    }
-                   _colide_point = std::array<float,2>{_drawable->x(),_drawable->y()};
-                   _colide_with = other;
-                   return;
+                   if(_colision){
+                       std::cout<<"Colision with "<<_colision->name<<"\n";
+                       _colision->handled = false;
+                       return true;
+                   }
+                   const auto normals = _colider->normals();
+                   auto point = std::array<float,2>{_drawable->x(),_drawable->y()};
+                   _colision = std::make_shared<PColision>(point,velocity_direction(),other,normals);
+                   return true;
                }
             }
             _colide = false;
-            _colide_point = std::array<float,2>{-1.0f,-1.0f};
-            _colide_with = nullptr;
-            
+            _colision = nullptr;
+            return false;
         }
 
         void move(float delta_time){
+            if(delta_time == 0){
+                return;
+            }
             if(NEAR_ZERO(_velocity[0]) && NEAR_ZERO(_velocity[1])){
                 return;
             }
-            
-            if( _colide ){
-                _velocity[1] = _velocity[1] * -1 * _restition;
+            if( _colide  && _colision && !_colision->handled){
+                std::cout<<"Handle collision:"<<_colision->name<<"\n";
+                auto collision_normal = normalize(_colision->normals);
+                float dot_product = _velocity[0] * collision_normal[0] + _velocity[1] * collision_normal[1];
+                _velocity[0] -= (1 + _restition) * dot_product * collision_normal[0];
+                _velocity[1] -= (1 + _restition) * dot_product * collision_normal[1];
+                _colision->handled = true;
+                _drawable->add(std::array<float,2>{_colision->point[0] - _drawable->x(),_colision->point[1] - _drawable->y()-1});
             }else{
                 _velocity[1] += _gravity * delta_time;
+                _velocity[0] += _acceleration * delta_time;
             }
-            _velocity[0] += _acceleration * delta_time;
             
             if( NEAR_ZERO(_velocity[0]) ){
                 _velocity[0] = 0;

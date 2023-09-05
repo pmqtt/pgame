@@ -20,12 +20,15 @@ void PEventLoop::run(){
                     break;
                 }
         }
+        if(_delta_time > 0){
         SDL_SetRenderDrawColor(_renderer.get(), 0, 0, 0, 255);
         SDL_RenderClear(_renderer.get());
         for(auto iter = _physic_objects.begin(); iter != _physic_objects.end(); ++iter){
             for(auto sIter = std::next(iter); sIter != _physic_objects.end(); ++sIter){
                 if(iter != sIter){
-                    iter->second->colide(sIter->second);
+                   if( iter->second->colide(sIter->second) ){
+                        break;
+                   }
                 }
             }
         }
@@ -39,7 +42,7 @@ void PEventLoop::run(){
         for(auto animation : _animations){
             animation.second->draw(this, _renderer);
         }
+        }
         SDL_RenderPresent(_renderer.get());
-                
     }
 }

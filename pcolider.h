@@ -1,10 +1,14 @@
 #ifndef PCOLIDER_H
 #define PCOLIDER_H
 #include "pprimitive.h"
+#include <optional>
 
 
 struct PColider{
     virtual auto colide(std::shared_ptr<PDrawable> p1, std::shared_ptr<PDrawable> p2) const -> bool = 0;
+    virtual auto normals()const -> std::array<float,2>{
+        return {{0,0}};
+    }
 };
 
 
@@ -104,9 +108,17 @@ struct PSatColider : PColider{
         const PVertices2D verticesA = create_vertices(p1_center_x,p1_center_y,p1_w2,p1_h2,angle_p1_rad);
         const PVertices2D verticesB = create_vertices(p2_center_x,p2_center_y,p2_w2,p2_h2,angle_p2_rad);
 
+        float minOverlap = INFINITY;
         for (auto axis : axes) {
-            if (is_separating_axis(axis, verticesA, verticesB)) {
+            auto res = is_separating_axis(axis, verticesA, verticesB);
+            if (!res){
                 return false;
+            }else{
+                const float overlap = *res;
+                if (overlap < minOverlap) {
+                    minOverlap = overlap;
+                    _collision_normal = axis;  // Speichern Sie die Achse mit der minimalen Überlappung
+                }
             }
         }
         return true;
@@ -130,7 +142,7 @@ struct PSatColider : PColider{
     }
 
     auto is_separating_axis(const std::array<float,2> & axis, 
-                            const PVertices2D & verticesA, const PVertices2D & verticesB)const -> bool{
+                            const PVertices2D & verticesA, const PVertices2D & verticesB)const -> std::optional<float>{
         float minA = INFINITY, maxA = -INFINITY;
         float minB = INFINITY, maxB = -INFINITY;
 
@@ -147,13 +159,18 @@ struct PSatColider : PColider{
         }
 
         if (maxA < minB || maxB < minA) {
-            return true;
+            return {};
         }
+        return std::min(maxA, maxB) - std::max(minA, minB);
+    }
 
-        return false;
-    }     
+    auto normals()const -> std::array<float, 2> override{
+        return _collision_normal;
+    }
 
 
+private:
+    mutable std::array<float, 2> _collision_normal = {{0.0f, 0.0f}};
 };
 
 

@@ -27,16 +27,18 @@ auto main(int argc, char** argv) -> int{
     event_loop.add_key_down_listener(std::make_shared<PressRight>());
     
 
-    auto drawable = std::make_shared<PRect>(300,0,10,10);
+    auto drawable = std::make_shared<PRect>(500,0,10,10);
     auto object = std::make_shared<PPhysicObject>(drawable,std::make_shared<PSatColider>());
     object->gravity(98.1);
-    object->velocity(16,0.001);
-    object->restitution(0.6);
+    object->velocity(-30,120);
+    object->restitution(0.8);
     event_loop.add_physics_object("obj", object);
     
-    auto static_draw1 = std::make_shared<PRect>(200,200,300,50,false);
+    auto static_draw1 = std::make_shared<PRect>(150,300,300,50,false);
+    auto static_draw2 = std::make_shared<PRect>(400,300,300,50,false);
     static_draw1->rotate(22.5);
     event_loop.add_physics_object("static_draw1", std::make_shared<PPhysicObject>(static_draw1));
+    event_loop.add_physics_object("static_draw2", std::make_shared<PPhysicObject>(static_draw2));
     event_loop.run();
     return 0;
 }

@@ -1,6 +1,7 @@
 #ifndef PTIMER_H
 #define PTIMER_H
 #include <SDL2/SDL.h>
+#include "pmath.h"
 struct PTimer{
         PTimer():
             _startTicks(0){
@@ -11,8 +12,11 @@ struct PTimer{
         }
 
         auto delta_ticks()->double{
-            auto currentTicks = SDL_GetTicks();
+            const auto currentTicks = SDL_GetTicks();
             auto delta = (currentTicks - _startTicks) / 1000.0;
+            if(delta <= 0){
+                return delta;
+            }
             _startTicks = currentTicks;
             return delta;
         }
