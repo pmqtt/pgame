@@ -26,12 +26,11 @@ auto main(int argc, char** argv) -> int{
     auto event_loop = window.create_event_loop();
     event_loop.add_key_down_listener(std::make_shared<PressEscape>());
     event_loop.add_key_down_listener(std::make_shared<PressRight>());
-    auto drawable = std::make_shared<PRect>(200,0,10,10);
+    auto drawable = std::make_shared<PRect>(50,0,10,10);
     auto object = std::make_shared<PPhysicObject>(drawable,std::make_shared<PSatColider>());
     object->gravity(98.1);
     object->velocity(30,0.001);
     object->restitution(0.6);
-    object->velocity_direction(2*M_PI);
     event_loop.add_physics_object("obj", object);
     auto object2 = std::make_shared<PPhysicObject>(std::make_shared<PRect>(0,510,800,100,false));
     event_loop.add_physics_object("obj2", object2);

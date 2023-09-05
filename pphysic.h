@@ -39,8 +39,8 @@ class PPhysicObject {
         }
 
         // Set the velocity direction for this object in degrees
-        void velocity_direction(float direction){
-            _velocity_direction = direction;
+        auto velocity_direction() -> float{
+            return atan2(_velocity[1],_velocity[0]) * 180 / M_PI;
         }
 
         void restitution(float value){
@@ -50,10 +50,23 @@ class PPhysicObject {
         void colide(std::shared_ptr<PPhysicObject> other){
             if(_colider){
                _colide =  _colider->colide(_drawable,other->_drawable);
-               _colide_point = std::array<float,2>{_drawable->x(),_drawable->y()};
-            }else{
-                _colide = false;
+               if(_colide){
+                   if(_colide_with == other){
+                        float direction_this = velocity_direction();
+                        if(direction_this < 0 && direction_this > -180){
+                            _colide = false;
+                            return;
+                        }
+                   }
+                   _colide_point = std::array<float,2>{_drawable->x(),_drawable->y()};
+                   _colide_with = other;
+                   return;
+               }
             }
+            _colide = false;
+            _colide_point = std::array<float,2>{-1.0f,-1.0f};
+            _colide_with = nullptr;
+            
         }
 
         void move(float delta_time){
@@ -62,8 +75,6 @@ class PPhysicObject {
             }
             if( _colide ){
                 _velocity[1] = _velocity[1] * -1 * _restition;
-                auto box = _drawable->bounding_box();
-               _drawable->add(std::array<float,2>{0,-1.0f});
                 
             }else{
                 _velocity[1] += _gravity * delta_time;
@@ -75,7 +86,10 @@ class PPhysicObject {
 
             float x = _velocity[0] * delta_time;
             float y = _velocity[1] * delta_time;
-            
+            if(abs(_velocity[1]) < 0.1){
+                y = 0;
+                _velocity[1] = 0.001;
+            }
             _drawable->add(std::array<float,2>{x,y});
         }
 
@@ -94,6 +108,7 @@ class PPhysicObject {
         bool _colide;
         std::array<float,2> _colide_point;
         float _acceleration;
+        std::shared_ptr<PPhysicObject> _colide_with;
 };
 
 #endif // PPHYSIC_H
