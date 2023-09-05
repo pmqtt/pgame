@@ -47,6 +47,9 @@ class PPhysicObject {
             _restition = value;
         }
 
+        //TODO:
+        // store direction_this and compare with previous direction_this to see if bouncing effect
+        // create a colision object that stores the colision point and the direction_this of the colision...
         void colide(std::shared_ptr<PPhysicObject> other){
             if(_colider){
                _colide =  _colider->colide(_drawable,other->_drawable);
