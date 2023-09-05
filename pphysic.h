@@ -3,6 +3,19 @@
 #include <SDL2/SDL.h>
 #include "pprimitive.h"
 #include "pcolider.h"
+#include "pmath.h"
+
+class PPhysicObject;
+
+struct PColision{
+    PColision( std::array<float,2> point, float direction_angle, std::shared_ptr<PPhysicObject> colide_with) :
+        point(point), direction_angle(direction_angle), colide_with(colide_with){
+    }
+    std::array<float,2> point;
+    float direction_angle;
+    std::shared_ptr<PPhysicObject> colide_with;
+};
+
 class PPhysicObject {
     public:
         PPhysicObject(std::shared_ptr<PDrawable> drawable) :
@@ -40,7 +53,8 @@ class PPhysicObject {
 
         // Set the velocity direction for this object in degrees
         auto velocity_direction() -> float{
-            return atan2(_velocity[1],_velocity[0]) * 180 / M_PI;
+            const float rad = atan2(_velocity[1],_velocity[0]);
+            return radian_to_degree( rad );
         }
 
         void restitution(float value){
@@ -56,7 +70,7 @@ class PPhysicObject {
                if(_colide){
                    if(_colide_with == other){
                         float direction_this = velocity_direction();
-                        if(direction_this < 0 && direction_this > -180){
+                        if(P_DIRECTION::P_UP == angle_to_direction(direction_this)){
                             _colide = false;
                             return;
                         }
@@ -73,17 +87,18 @@ class PPhysicObject {
         }
 
         void move(float delta_time){
-            if(std::abs(_velocity[0]) < 0.001 && std::abs(_velocity[1]) < 0.001){
+            if(NEAR_ZERO(_velocity[0]) && NEAR_ZERO(_velocity[1])){
                 return;
             }
+            
             if( _colide ){
                 _velocity[1] = _velocity[1] * -1 * _restition;
-                
             }else{
                 _velocity[1] += _gravity * delta_time;
             }
             _velocity[0] += _acceleration * delta_time;
-            if(_velocity[0] < 0.001f ){
+            
+            if( NEAR_ZERO(_velocity[0]) ){
                 _velocity[0] = 0;
             }
 
@@ -112,6 +127,7 @@ class PPhysicObject {
         std::array<float,2> _colide_point;
         float _acceleration;
         std::shared_ptr<PPhysicObject> _colide_with;
+        std::shared_ptr<PColision> _colision;
 };
 
 #endif // PPHYSIC_H
