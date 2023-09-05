@@ -21,7 +21,7 @@ struct PressRight : public PKeyDownListener{
 auto main(int argc, char** argv) -> int{
     P_UNUSED(argc);
     P_UNUSED(argv);
-    PWindow window("PGame",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,1200,600);
+    PWindow window("PGame",0,0,1600,600);
     auto event_loop = window.create_event_loop();
     event_loop.add_key_down_listener(std::make_shared<PressEscape>());
     event_loop.add_key_down_listener(std::make_shared<PressRight>());
@@ -30,12 +30,12 @@ auto main(int argc, char** argv) -> int{
     auto drawable = std::make_shared<PRect>(500,0,10,10);
     auto object = std::make_shared<PPhysicObject>(drawable,std::make_shared<PSatColider>());
     object->gravity(98.1);
-    object->velocity(-30,120);
+    object->velocity(-30,0.001);
     object->restitution(0.8);
     event_loop.add_physics_object("obj", object);
     
     auto static_draw1 = std::make_shared<PRect>(150,300,300,50,false);
-    auto static_draw2 = std::make_shared<PRect>(400,300,300,50,false);
+    auto static_draw2 = std::make_shared<PRect>(400,300,1400,50,false);
     static_draw1->rotate(22.5);
     event_loop.add_physics_object("static_draw1", std::make_shared<PPhysicObject>(static_draw1));
     event_loop.add_physics_object("static_draw2", std::make_shared<PPhysicObject>(static_draw2));

@@ -34,6 +34,12 @@ struct PDrawable{
             _changed = true;
         }
 
+        virtual void position(float x, float y){
+            _x = x;
+            _y = y;
+            _changed = true;
+        }
+
         virtual void draw_fill(std::shared_ptr<SDL_Renderer> renderer) = 0;
         virtual void draw_empty(std::shared_ptr<SDL_Renderer> renderer) = 0;
         

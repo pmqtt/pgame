@@ -76,8 +76,8 @@ class PPhysicObject {
             if(_colider){
                _colide =  _colider->colide(_drawable,other->_drawable);
                if(_colide){
+                   const float direction_this = velocity_direction();
                    if(_colision && _colision->colide_with == other && _colision->handled){
-                        float direction_this = velocity_direction();
                         if(angle_to_direction(_colision->direction_angle) != angle_to_direction(direction_this)){
                             _colide = false;
                             return true;
@@ -106,14 +106,15 @@ class PPhysicObject {
             if(NEAR_ZERO(_velocity[0]) && NEAR_ZERO(_velocity[1])){
                 return;
             }
+            bool handle_collision = false;
             if( _colide  && _colision && !_colision->handled){
                 std::cout<<"Handle collision:"<<_colision->name<<"\n";
                 auto collision_normal = normalize(_colision->normals);
-                float dot_product = _velocity[0] * collision_normal[0] + _velocity[1] * collision_normal[1];
+                const float dot_product = _velocity[0] * collision_normal[0] + _velocity[1] * collision_normal[1];
                 _velocity[0] -= (1 + _restition) * dot_product * collision_normal[0];
                 _velocity[1] -= (1 + _restition) * dot_product * collision_normal[1];
                 _colision->handled = true;
-                _drawable->add(std::array<float,2>{_colision->point[0] - _drawable->x(),_colision->point[1] - _drawable->y()-1});
+                handle_collision = true;
             }else{
                 _velocity[1] += _gravity * delta_time;
                 _velocity[0] += _acceleration * delta_time;
@@ -125,11 +126,19 @@ class PPhysicObject {
 
             float x = _velocity[0] * delta_time;
             float y = _velocity[1] * delta_time;
-            if(abs(_velocity[1]) < 0.1){
+            if(abs(_velocity[1]) < 0.001){
                 y = 0;
                 _velocity[1] = 0.001;
             }
-            _drawable->add(std::array<float,2>{x,y});
+            if(handle_collision){
+                float y_len = _colision->point[1] - _drawable->y() -y -1.0f;
+                if(abs(1-y_len) > 1.98){
+                    y_len = 0;
+                }
+                _drawable->add(std::array<float,2>{x,y_len});
+            }else{
+                _drawable->add(std::array<float,2>{x,y});
+            }
         }
 
         auto drawable() const{
