@@ -21,27 +21,27 @@ void PEventLoop::run(){
                 }
         }
         if(_delta_time > 0){
-        SDL_SetRenderDrawColor(_renderer.get(), 0, 0, 0, 255);
-        SDL_RenderClear(_renderer.get());
-        for(auto iter = _physic_objects.begin(); iter != _physic_objects.end(); ++iter){
-            for(auto sIter = std::next(iter); sIter != _physic_objects.end(); ++sIter){
-                if(iter != sIter){
-                   if( iter->second->colide(sIter->second) ){
-                        break;
-                   }
+            SDL_SetRenderDrawColor(_renderer.get(), 0, 0, 0, 255);
+            SDL_RenderClear(_renderer.get());
+            for(auto iter = _physic_objects.begin(); iter != _physic_objects.end(); ++iter){
+                for(auto sIter = std::next(iter); sIter != _physic_objects.end(); ++sIter){
+                    if(iter != sIter){
+                        if( iter->second->colide(sIter->second) ){
+                            break;
+                        }
+                    }
                 }
             }
-        }
 
-        for(auto physic : _physic_objects){
-            physic.second->move(_delta_time);
-        }
-        for(auto moveable : _moveables){
-            moveable.second->draw(_renderer);
-        }
-        for(auto animation : _animations){
-            animation.second->draw(this, _renderer);
-        }
+            for(auto physic : _physic_objects){
+                physic.second->move(_delta_time);
+            }
+            for(auto moveable : _moveables){
+                moveable.second->draw(_renderer);
+            }
+            for(auto animation : _animations){
+                animation.second->draw(this, _renderer);
+            }
         }
         SDL_RenderPresent(_renderer.get());
     }

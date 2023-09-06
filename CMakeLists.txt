@@ -3,11 +3,11 @@ project(pgamelib)
 
 find_package(SDL2 REQUIRED)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 add_compile_options(-Wall -Wextra -Wpedantic)
-# add_compile_options(-fsanitize=address)
-# link_libraries(-fsanitize=address)
+add_compile_options(-fsanitize=address)
+link_libraries(-fsanitize=address)
 add_library(pgame STATIC panimation.cpp peventloop.cpp pwindow.cpp)
 
 message(STATUS "SDL2_INCLUDE_DIRS: ${SDL2_INCLUDE_DIRS}")
@@ -15,8 +15,8 @@ message(STATUS "SDL2_LIBRARIES: ${SDL2_LIBRARIES}")
 
 function(add_core_test TEST_NAME)
   add_executable(${TEST_NAME} test/${TEST_NAME}.cpp)
-  #target_link_libraries(${TEST_NAME} SDL2::SDL2 pgame)
-  target_link_libraries(${TEST_NAME} SDL2main SDL2 pgame)
+  target_link_libraries(${TEST_NAME} SDL2::SDL2 pgame)
+  #target_link_libraries(${TEST_NAME} SDL2main SDL2 pgame)
   # Create directory in test/bin if it doesn't exist
   file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/test/bin)
 
