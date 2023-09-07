@@ -77,24 +77,17 @@ class PPhysicObject {
             if(_colider){
                _colide =  _colider->colide(_drawable,other->_drawable);
                if(_colide){
-                   std::cout<<"===========================================\n\n";
                    const auto normals = _colider->normals();
                    const auto dot_product = _velocity[0] * normals[0] + _velocity[1] * normals[1]; 
-                   std::cout<<"position: "<<_drawable->x()<<","<<_drawable->y()<<std::endl;
-                   std::cout<<"normals: "<<normals[0]<<","<<normals[1]<<std::endl;
-                   std::cout<<"velocity: "<<_velocity[0]<<","<<_velocity[1]<<std::endl;
-                   std::cout<<"dot product: "<<dot_product<<std::endl;
                    P_DIRECTION vel_direction = angle_to_direction( velocity_direction() );
                    P_DIRECTION normal_direction = angle_to_direction( atan2(normals[1],normals[0] ));
 
                    if( dot_product < 0 ){
                         if( vel_direction == P_DIRECTION::P_DOWN && normal_direction == P_DIRECTION::P_UP ){
-                            std::cout<<"dot product < 0 && vel_direction == normal_direction"<<std::endl;
                             _colide = false;
                             return false;
                         }
                    }
-                   
 
                    auto point = std::array<float,2>{_drawable->x(),_drawable->y()};
                    _colision = std::make_shared<PColision>(point,velocity_direction(),other,normals);
