@@ -5,31 +5,18 @@
 #include <iostream>
 #include "pmath.h"
 struct PTimer{
-        PTimer():
-            _startTicks(0),_mu_sum(0){
-        }
+        PTimer() = default;
 
         void start(){
-            //_startTicks = SDL_GetTicks();
             _start = std::chrono::high_resolution_clock::now();
         }
 
         auto delta_ticks()->double{
-            //const auto currentTicks = SDL_GetTicks();
             const auto current = std::chrono::high_resolution_clock::now();
             const auto mu_delta = std::chrono::duration_cast<std::chrono::microseconds>(current - _start).count();
             _start = current;
-
-            //auto delta = (currentTicks - _startTicks) / 1000.0;
-            _mu_sum += mu_delta;
-            if( _mu_sum  > 1000 ){
-                const auto delta = _mu_sum / (1000.0*1000.0);
-                _mu_sum = 0;
-                return delta;
-            }
-            return 0; 
-            //_startTicks = currentTicks;
-            //return delta;
+            float x = mu_delta / (1000000.0f);
+            return x; 
         }
 
     private:

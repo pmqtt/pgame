@@ -41,10 +41,6 @@ void PEventLoop::run(){
         for(auto animation : _animations){
             animation.second->draw(this, _renderer);
         }
-        // delay if needed
-        if(_delta_time < 0.016){
-            SDL_Delay(0.016 - _delta_time);
-        }
         SDL_RenderPresent(_renderer.get());
     }
 }

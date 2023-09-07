@@ -48,6 +48,13 @@ constexpr std::array<float, 2> normalize(const std::array<float, 2>& vec) {
     return {vec[0] / length, vec[1] / length};
 }
 
+constexpr double angle_between_vectors(double vx, double vy, double nx, double ny) {
+    double dotProduct = vx * nx + vy * ny;
+    double lengthV = std::sqrt(vx * vx + vy * vy);
+    double lengthN = std::sqrt(nx * nx + ny * ny);
+    double angle = std::acos(dotProduct / (lengthV * lengthN));
+    return angle;
+}
 
 
 

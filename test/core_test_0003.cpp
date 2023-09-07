@@ -35,8 +35,8 @@ auto main(int argc, char** argv) -> int{
     event_loop.add_physics_object("obj", object);
     
     auto static_draw1 = std::make_shared<PRect>(150,300,300,50,false);
-    auto static_draw2 = std::make_shared<PRect>(400,300,1400,50,false);
-    static_draw1->rotate(22.5);
+    auto static_draw2 = std::make_shared<PRect>(400,220,140,50,false);
+    static_draw1->rotate(-22.5);
     event_loop.add_physics_object("static_draw1", std::make_shared<PPhysicObject>(static_draw1));
     event_loop.add_physics_object("static_draw2", std::make_shared<PPhysicObject>(static_draw2));
     event_loop.run();

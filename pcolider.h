@@ -71,16 +71,21 @@ struct PCircleColider : public PColider{
 
 using PVertices2D = std::array<std::array<float,2>,4>;
 
+constexpr float NEG_SIN(float angle){
+    auto x = -sin(angle);
+    return x;
+}
+
 struct PSatColider : PColider{
-    
+
     auto colide(std::shared_ptr<PDrawable> p1, std::shared_ptr<PDrawable> p2) const -> bool override{
         const float angle_p1_rad = p1->angle() * M_PI / 180;
         const float angle_p2_rad = p2->angle() * M_PI / 180;
         const PVertices2D axes = {{
-            {{ cos(angle_p1_rad), sin(angle_p1_rad)  }},
-            {{ (float)-sin(angle_p1_rad), (float)cos(angle_p1_rad) }} ,
-            {{ cos(angle_p2_rad), sin(angle_p2_rad)  }},
-            {{ -sin(angle_p2_rad), cos(angle_p2_rad) }} 
+            {{ cos(angle_p1_rad), NEG_SIN(angle_p1_rad)  }},
+            {{ sin(angle_p1_rad), cos(angle_p1_rad) }} ,
+            {{ cos(angle_p2_rad), NEG_SIN(angle_p2_rad)  }},
+            {{ sin(angle_p2_rad), cos(angle_p2_rad) }} 
         }};
 
         const auto A = p1->bounding_box();
@@ -117,7 +122,7 @@ struct PSatColider : PColider{
                 const float overlap = *res;
                 if (overlap < minOverlap) {
                     minOverlap = overlap;
-                    _collision_normal = axis;  // Speichern Sie die Achse mit der minimalen Überlappung
+                    _collision_normal = axis;
                 }
             }
         }
@@ -127,17 +132,17 @@ struct PSatColider : PColider{
     auto rotate_middpoint(const std::array<float,4> &box,float x, float y, float rad) const -> std::array<float,2>{
         const float xc =  box[0];
         const float yc =  box[1];
-        const float xr = (x - xc) * cos(rad) - (y - yc) * sin(rad) + xc;
-        const float yr = (x - xc) * sin(rad) + (y - yc) * cos(rad) + yc;
+        const float xr = (x - xc) * cos(rad) + (y - yc) * sin(rad) + xc;
+        const float yr = -(x - xc) * sin(rad) + (y - yc) * cos(rad) + yc;
         return {{xr,yr}};
     }
 
     PVertices2D create_vertices(float p1_center_x,float p1_center_y,float p1_w2,float p1_h2,float angle_p1_rad)const{
         return {{
-            {{p1_center_x + cos(angle_p1_rad) * p1_w2 - sin(angle_p1_rad) * p1_h2, p1_center_y + sin(angle_p1_rad) * p1_w2 + cos(angle_p1_rad) * p1_h2}},
-            {{p1_center_x - cos(angle_p1_rad) * p1_w2 - sin(angle_p1_rad) * p1_h2, p1_center_y - sin(angle_p1_rad) * p1_w2 + cos(angle_p1_rad) * p1_h2}},
-            {{p1_center_x - cos(angle_p1_rad) * p1_w2 + sin(angle_p1_rad) * p1_h2, p1_center_y - sin(angle_p1_rad) * p1_w2 - cos(angle_p1_rad) * p1_h2}},
-            {{p1_center_x + cos(angle_p1_rad) * p1_w2 + sin(angle_p1_rad) * p1_h2, p1_center_y + sin(angle_p1_rad) * p1_w2 - cos(angle_p1_rad) * p1_h2}}
+            {{p1_center_x + cos(angle_p1_rad) * p1_w2 + sin(angle_p1_rad) * p1_h2, p1_center_y - sin(angle_p1_rad) * p1_w2 + cos(angle_p1_rad) * p1_h2}},
+            {{p1_center_x - cos(angle_p1_rad) * p1_w2 + sin(angle_p1_rad) * p1_h2, p1_center_y + sin(angle_p1_rad) * p1_w2 + cos(angle_p1_rad) * p1_h2}},
+            {{p1_center_x - cos(angle_p1_rad) * p1_w2 - sin(angle_p1_rad) * p1_h2, p1_center_y + sin(angle_p1_rad) * p1_w2 - cos(angle_p1_rad) * p1_h2}},
+            {{p1_center_x + cos(angle_p1_rad) * p1_w2 - sin(angle_p1_rad) * p1_h2, p1_center_y - sin(angle_p1_rad) * p1_w2 - cos(angle_p1_rad) * p1_h2}}
         }};
     }
 
@@ -157,7 +162,6 @@ struct PSatColider : PColider{
             minB = std::min(minB, projection);
             maxB = std::max(maxB, projection);
         }
-
         if (maxA < minB || maxB < minA) {
             return {};
         }
@@ -167,6 +171,7 @@ struct PSatColider : PColider{
     auto normals()const -> std::array<float, 2> override{
         return _collision_normal;
     }
+
 
 
 private:

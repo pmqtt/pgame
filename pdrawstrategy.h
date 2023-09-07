@@ -35,8 +35,8 @@ class PDrawCartesianStrategy : public PDrawStrategy{
                 const float rad = _angle * M_PI / 180.0;
                 const float xc = _box[0];
                 const float yc = _box[1];
-                const float xr = (x - xc) * cos(rad) - (y - yc) * sin(rad) + xc;
-                const float yr = (x - xc) * sin(rad) + (y - yc) * cos(rad) + yc;
+                const float xr = (x - xc) * cos(rad) + (y - yc) * sin(rad) + xc;
+                const float yr = -(x - xc) * sin(rad) + (y - yc) * cos(rad) + yc;
                 SDL_RenderDrawPointF(renderer.get(), xr, yr);
                 SDL_RenderDrawPointF(renderer.get(), xr+1, yr);
                 SDL_RenderDrawPointF(renderer.get(), xr-1, yr);
@@ -52,10 +52,10 @@ class PDrawCartesianStrategy : public PDrawStrategy{
                 const double rad = _angle * M_PI / 180.0;
                 const float xc = _box[0];
                 const float yc = _box[1];
-                const float xr1 = (x1 - xc) * cos(rad) - (y1 - yc) * sin(rad) + xc;
-                const float yr1 = (x1 - xc) * sin(rad) + (y1 - yc) * cos(rad) + yc;
-                const float xr2 = (x2 - xc) * cos(rad) - (y2 - yc) * sin(rad) + xc;
-                const float yr2 = (x2 - xc) * sin(rad) + (y2 - yc) * cos(rad) + yc;
+                const float xr1 = (x1 - xc) * cos(rad) + (y1 - yc) * sin(rad) + xc;
+                const float yr1 = -(x1 - xc) * sin(rad) + (y1 - yc) * cos(rad) + yc;
+                const float xr2 = (x2 - xc) * cos(rad) + (y2 - yc) * sin(rad) + xc;
+                const float yr2 = -(x2 - xc) * sin(rad) + (y2 - yc) * cos(rad) + yc;
                 SDL_RenderDrawLineF(renderer.get(), xr1, yr1, xr2, yr2);
            }else{
             SDL_RenderDrawLineF(renderer.get(), x1, y1, x2, y2);
