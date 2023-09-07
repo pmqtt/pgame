@@ -105,13 +105,7 @@ struct PSatColider : PColider{
             PPoint2D point2 = shape1[(i + 1) % shape1.size()];
             PPoint2D edge = point2 - point1;
             PPoint2D axis = normalize(perpendicular(edge));
-           /* std::cout<<"Point1: " << point1[0] << " " << point1[1] << std::endl;
-            std::cout<<"Point2: " << point2[0] << " " << point2[1] << std::endl;
-            std::cout<<"Edge: " << edge[0] << " " << edge[1] << std::endl;
-            std::cout<<"Axis: " << axis[0] << " " << axis[1] << std::endl;
-*/
             float overlap = overlapAmount(axis, shape1, shape2);
-           // std::cout<<"Overlap: " << overlap << std::endl;
             if (overlap < 0) {
                 return false;
             }
@@ -121,22 +115,15 @@ struct PSatColider : PColider{
                 smallestOverlapAxis = axis;
             }
         }
-        // Check axes of shape2
-       // std::cout<<"========================="<<std::endl;
         for (size_t i = 0; i < shape2.size(); ++i) {
             PPoint2D point1 = shape2[i];
             PPoint2D point2 = shape2[(i + 1) % shape2.size()];
             PPoint2D edge = point2 - point1;
             PPoint2D axis = normalize(perpendicular(edge));
-          /*  std::cout<<"Point1: " << point1[0] << " " << point1[1] << std::endl;
-            std::cout<<"Point2: " << point2[0] << " " << point2[1] << std::endl;
-            std::cout<<"Edge: " << edge[0] << " " << edge[1] << std::endl;
-            std::cout<<"Axis: " << axis[0] << " " << axis[1] << std::endl;*/
             float overlap = overlapAmount(axis, shape1, shape2);
             if (overlap < 0) {
                 return false;
             }
-         //   std::cout<<"Overlap: " << overlap << std::endl;
             if (overlap < smallestOverlap) {
                 smallestOverlap = overlap;
                 smallestOverlapAxis = axis;
