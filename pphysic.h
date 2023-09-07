@@ -72,17 +72,30 @@ class PPhysicObject {
             return _colide;
         }
 
+
         auto colide(std::shared_ptr<PPhysicObject> other) -> bool {
             if(_colider){
                _colide =  _colider->colide(_drawable,other->_drawable);
                if(_colide){
+                   std::cout<<"===========================================\n\n";
                    const auto normals = _colider->normals();
-                   const auto angle_velocity = atan2(_velocity[1],_velocity[0]);
-                   const auto angle_normals = atan2(normals[1],normals[0]);
-                   if( std::signbit( angle_velocity ) != signbit(angle_normals) ){      
+                   const auto dot_product = _velocity[0] * normals[0] + _velocity[1] * normals[1]; 
+                   std::cout<<"position: "<<_drawable->x()<<","<<_drawable->y()<<std::endl;
+                   std::cout<<"normals: "<<normals[0]<<","<<normals[1]<<std::endl;
+                   std::cout<<"velocity: "<<_velocity[0]<<","<<_velocity[1]<<std::endl;
+                   std::cout<<"dot product: "<<dot_product<<std::endl;
+                   P_DIRECTION vel_direction = angle_to_direction( velocity_direction() );
+                   P_DIRECTION normal_direction = angle_to_direction( atan2(normals[1],normals[0] ));
+
+                   if( dot_product < 0 ){
+                        if( vel_direction == P_DIRECTION::P_DOWN && normal_direction == P_DIRECTION::P_UP ){
+                            std::cout<<"dot product < 0 && vel_direction == normal_direction"<<std::endl;
                             _colide = false;
-                            return true;
+                            return false;
+                        }
                    }
+                   
+
                    auto point = std::array<float,2>{_drawable->x(),_drawable->y()};
                    _colision = std::make_shared<PColision>(point,velocity_direction(),other,normals);
                    return true;
@@ -101,6 +114,7 @@ class PPhysicObject {
                 return;
             }
             if( _colide  ){
+                delta_time += 0.05;
                 auto collision_normal = normalize(_colision->normals);
                 const float dot_product = _velocity[0] * collision_normal[0] + _velocity[1] * collision_normal[1];
                 _velocity[0] -= (1 + _restition) * dot_product * collision_normal[0];
@@ -112,6 +126,9 @@ class PPhysicObject {
             
             if( NEAR_ZERO(_velocity[0]) ){
                 _velocity[0] = 0;
+                if( _colide ){
+                    delta_time -= 0.05;
+                }
             }
 
             float x = _velocity[0] * delta_time;

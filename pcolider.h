@@ -18,16 +18,16 @@ struct PBoxColider : public PColider{
         const auto box2 = p2->bounding_box();
 
         // Berechne die Seiten des Rechtecks A
-        const float leftA = box1[0];
-        const float rightA = leftA + box1[2];
-        const float topA = box1[1];
-        const float bottomA = topA + box1[3];
+        const float leftA = box1[0][0]; // x
+        const float rightA = box1[1][0]; //
+        const float topA = box1[0][1]; //y
+        const float bottomA = box1[2][1];
 
         // Berechne die Seiten des Rechtecks B
-        const float leftB = box2[0];
-        const float rightB = leftB + box2[2];
-        const float topB = box2[1];
-        const float bottomB = topB + box2[3];
+        const float leftB = box2[0][0]; // x
+        const float rightB = box2[0][1]; // x+w
+        const float topB = box2[0][1]; //y
+        const float bottomB = box2[2][1]; // y+h
 
 
         // Überprüfe die Konditionen
@@ -53,7 +53,9 @@ struct PBoxColider : public PColider{
 
 struct PCircleColider : public PColider{
     auto colide(std::shared_ptr<PDrawable> p1, std::shared_ptr<PDrawable> p2) const -> bool override{
-        const auto box1 = p1->bounding_box();
+        P_UNUSED(p1);
+        P_UNUSED(p2);
+        /*const auto box1 = p1->bounding_box();
         const auto box2 = p2->bounding_box();
         const auto x1 = box1[0] + box1[2]/2;
         const auto y1 = box1[1] + box1[3]/2;
@@ -64,115 +66,108 @@ struct PCircleColider : public PColider{
         const auto dx = x1 - x2;
         const auto dy = y1 - y2;
         const auto d = sqrt(dx*dx + dy*dy);
-        return d < r1 + r2;
+        return d < r1 + r2;*/
+        return false;
     }
 };
 
 
 using PVertices2D = std::array<std::array<float,2>,4>;
+using PPoint2D = std::array<float,2>;
 
-constexpr float NEG_SIN(float angle){
-    auto x = -sin(angle);
-    return x;
+constexpr auto operator-(const PPoint2D &p1, const PPoint2D &p2) -> PPoint2D{
+    return {{p1[0] - p2[0], p1[1] - p2[1]}};
+}
+
+constexpr auto dot(const PPoint2D &p1, const PPoint2D &p2) -> float{
+    return p1[0]*p2[0] + p1[1]*p2[1];
+}
+
+constexpr auto perpendicular(const PPoint2D &p) -> PPoint2D{
+    return {{-p[1], p[0]}};
 }
 
 struct PSatColider : PColider{
 
+    void prin_point_2d(const PPoint2D &p) const{
+        std::cout << "(" << p[0] << "," << p[1] << ")";
+    }
+
     auto colide(std::shared_ptr<PDrawable> p1, std::shared_ptr<PDrawable> p2) const -> bool override{
-        const float angle_p1_rad = p1->angle() * M_PI / 180;
-        const float angle_p2_rad = p2->angle() * M_PI / 180;
-        const PVertices2D axes = {{
-            {{ cos(angle_p1_rad), NEG_SIN(angle_p1_rad)  }},
-            {{ sin(angle_p1_rad), cos(angle_p1_rad) }} ,
-            {{ cos(angle_p2_rad), NEG_SIN(angle_p2_rad)  }},
-            {{ sin(angle_p2_rad), cos(angle_p2_rad) }} 
-        }};
+        PPoint2D smallestOverlapAxis = {0, 0};
+        float smallestOverlap = std::numeric_limits<float>::max();
 
-        const auto A = p1->bounding_box();
-        const auto B = p2->bounding_box();
-        const float p1_h = A[3];
-        const float p1_w = A[2];
-        const float p1_w2 = p1_w / 2;
-        const float p1_h2 = p1_h / 2;
-        const float p1_center_xx = A[0] + p1_w2;
-        const float p1_center_yy = A[1] + p1_h2;
-        const auto p1_center = rotate_middpoint(A,p1_center_xx,p1_center_yy,angle_p1_rad);
-        const float p1_center_x = p1_center[0];
-        const float p1_center_y = p1_center[1];
-
-        const float p2_h = B[3];
-        const float p2_w = B[2];
-        const float p2_w2 = p2_w / 2;
-        const float p2_h2 = p2_h / 2;
-        const float p2_center_xx = B[0] + p2_w2;
-        const float p2_center_yy = B[1] + p2_h2;
-        const auto p2_center = rotate_middpoint(B,p2_center_xx,p2_center_yy,angle_p2_rad);
-        const float p2_center_x = p2_center[0];
-        const float p2_center_y = p2_center[1];
-
-        const PVertices2D verticesA = create_vertices(p1_center_x,p1_center_y,p1_w2,p1_h2,angle_p1_rad);
-        const PVertices2D verticesB = create_vertices(p2_center_x,p2_center_y,p2_w2,p2_h2,angle_p2_rad);
-
-        float minOverlap = INFINITY;
-        for (auto axis : axes) {
-            auto res = is_separating_axis(axis, verticesA, verticesB);
-            if (!res){
+        // Check axes of shape1
+        auto shape1 = p1->bounding_box();
+        auto shape2 = p2->bounding_box();
+        for (size_t i = 0; i < shape1.size(); ++i) {
+            PPoint2D point1 = shape1[i];
+            PPoint2D point2 = shape1[(i + 1) % shape1.size()];
+            PPoint2D edge = point2 - point1;
+            PPoint2D axis = normalize(perpendicular(edge));
+           /* std::cout<<"Point1: " << point1[0] << " " << point1[1] << std::endl;
+            std::cout<<"Point2: " << point2[0] << " " << point2[1] << std::endl;
+            std::cout<<"Edge: " << edge[0] << " " << edge[1] << std::endl;
+            std::cout<<"Axis: " << axis[0] << " " << axis[1] << std::endl;
+*/
+            float overlap = overlapAmount(axis, shape1, shape2);
+           // std::cout<<"Overlap: " << overlap << std::endl;
+            if (overlap < 0) {
                 return false;
-            }else{
-                const float overlap = *res;
-                if (overlap < minOverlap) {
-                    minOverlap = overlap;
-                    _collision_normal = axis;
-                }
+            }
+
+            if (overlap < smallestOverlap) {
+                smallestOverlap = overlap;
+                smallestOverlapAxis = axis;
             }
         }
+        // Check axes of shape2
+       // std::cout<<"========================="<<std::endl;
+        for (size_t i = 0; i < shape2.size(); ++i) {
+            PPoint2D point1 = shape2[i];
+            PPoint2D point2 = shape2[(i + 1) % shape2.size()];
+            PPoint2D edge = point2 - point1;
+            PPoint2D axis = normalize(perpendicular(edge));
+          /*  std::cout<<"Point1: " << point1[0] << " " << point1[1] << std::endl;
+            std::cout<<"Point2: " << point2[0] << " " << point2[1] << std::endl;
+            std::cout<<"Edge: " << edge[0] << " " << edge[1] << std::endl;
+            std::cout<<"Axis: " << axis[0] << " " << axis[1] << std::endl;*/
+            float overlap = overlapAmount(axis, shape1, shape2);
+            if (overlap < 0) {
+                return false;
+            }
+         //   std::cout<<"Overlap: " << overlap << std::endl;
+            if (overlap < smallestOverlap) {
+                smallestOverlap = overlap;
+                smallestOverlapAxis = axis;
+            }
+        }
+        _collision_normal = smallestOverlapAxis;
         return true;
     }
 
-    auto rotate_middpoint(const std::array<float,4> &box,float x, float y, float rad) const -> std::array<float,2>{
-        const float xc =  box[0];
-        const float yc =  box[1];
-        const float xr = (x - xc) * cos(rad) + (y - yc) * sin(rad) + xc;
-        const float yr = -(x - xc) * sin(rad) + (y - yc) * cos(rad) + yc;
-        return {{xr,yr}};
-    }
-
-    PVertices2D create_vertices(float p1_center_x,float p1_center_y,float p1_w2,float p1_h2,float angle_p1_rad)const{
-        return {{
-            {{p1_center_x + cos(angle_p1_rad) * p1_w2 + sin(angle_p1_rad) * p1_h2, p1_center_y - sin(angle_p1_rad) * p1_w2 + cos(angle_p1_rad) * p1_h2}},
-            {{p1_center_x - cos(angle_p1_rad) * p1_w2 + sin(angle_p1_rad) * p1_h2, p1_center_y + sin(angle_p1_rad) * p1_w2 + cos(angle_p1_rad) * p1_h2}},
-            {{p1_center_x - cos(angle_p1_rad) * p1_w2 - sin(angle_p1_rad) * p1_h2, p1_center_y + sin(angle_p1_rad) * p1_w2 - cos(angle_p1_rad) * p1_h2}},
-            {{p1_center_x + cos(angle_p1_rad) * p1_w2 - sin(angle_p1_rad) * p1_h2, p1_center_y - sin(angle_p1_rad) * p1_w2 - cos(angle_p1_rad) * p1_h2}}
-        }};
-    }
-
-    auto is_separating_axis(const std::array<float,2> & axis, 
-                            const PVertices2D & verticesA, const PVertices2D & verticesB)const -> std::optional<float>{
-        float minA = INFINITY, maxA = -INFINITY;
-        float minB = INFINITY, maxB = -INFINITY;
-
-        for(const auto & vertex : verticesA){
-            const auto projection = axis[0] * vertex[0] + axis[1] * vertex[1];
-            minA = std::min(minA, projection);
-            maxA = std::max(maxA, projection);
+    auto overlapAmount(const PPoint2D& axis, const PVertices2D& shape1, const PVertices2D& shape2) const -> float {
+        float min1 = std::numeric_limits<float>::max();
+        float max1 = std::numeric_limits<float>::min();
+        for (const auto& point : shape1) {
+            float projection = dot(axis, point);
+            min1 = std::min(min1, projection);
+            max1 = std::max(max1, projection);
         }
 
-        for(const auto & vertex : verticesB){
-            const auto projection = axis[0] * vertex[0] + axis[1] * vertex[1];
-            minB = std::min(minB, projection);
-            maxB = std::max(maxB, projection);
+        float min2 = std::numeric_limits<float>::max();
+        float max2 = std::numeric_limits<float>::min();
+        for (const auto& point : shape2) {
+            float projection = dot(axis, point);
+            min2 = std::min(min2, projection);
+            max2 = std::max(max2, projection);
         }
-        if (maxA < minB || maxB < minA) {
-            return {};
-        }
-        return std::min(maxA, maxB) - std::max(minA, minB);
+        return std::min(max1, max2) - std::max(min1, min2);
     }
 
     auto normals()const -> std::array<float, 2> override{
         return _collision_normal;
     }
-
-
 
 private:
     mutable std::array<float, 2> _collision_normal = {{0.0f, 0.0f}};

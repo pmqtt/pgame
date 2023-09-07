@@ -2,6 +2,7 @@
 #define PMATH_H
 #include <cmath>
 #include <array>
+#include <iostream>
 
 constexpr auto NEAR_ZERO(float x) -> bool{
     return (x < 0.001 && x > -0.001);
@@ -20,6 +21,8 @@ constexpr auto radian_to_degree(float radian) -> float{
     return radian * 180 / M_PI;
 }
 
+// angle in degree
+// return Direction of angle
 enum class P_DIRECTION{
     P_UP = 0,
     P_DOWN = 180,
@@ -43,17 +46,28 @@ constexpr auto angle_to_direction(float angle) -> P_DIRECTION{
     return P_DIRECTION::P_NONE;
 }
 
-constexpr std::array<float, 2> normalize(const std::array<float, 2>& vec) {
+constexpr auto normalize(const std::array<float, 2>& vec) -> std::array<float, 2> {
     float length = std::sqrt(vec[0] * vec[0] + vec[1] * vec[1]);
-    return {vec[0] / length, vec[1] / length};
+    std::array<float,2> res = {vec[0] / length, vec[1] / length};
+    return res;
 }
 
-constexpr double angle_between_vectors(double vx, double vy, double nx, double ny) {
+constexpr auto angle_between_vectors(double vx, double vy, double nx, double ny) ->double {
     double dotProduct = vx * nx + vy * ny;
     double lengthV = std::sqrt(vx * vx + vy * vy);
     double lengthN = std::sqrt(nx * nx + ny * ny);
     double angle = std::acos(dotProduct / (lengthV * lengthN));
     return angle;
+}
+
+// calculate the position of a point after rotation
+// xc, yc: center of rotation
+// x, y: point to rotate
+// rad: angle in radian
+constexpr auto rotate_point(float xc, float yc, float x, float y, float rad) -> std::array<float,2>{
+    const float xr1 = (x - xc) * cos(rad) + (y - yc) * sin(rad) + xc;
+    const float yr1 = -(x - xc) * sin(rad) + (y - yc) * cos(rad) + yc;
+    return {xr1, yr1};
 }
 
 

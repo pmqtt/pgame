@@ -8,6 +8,7 @@
 
 #include "pdebug.h"
 #include "pdrawstrategy.h"
+#include "pmath.h"
 
 struct PDrawable{
     public:
@@ -71,13 +72,11 @@ struct PDrawable{
             return _fill;
         }
 
-        virtual auto bounding_box() const -> std::array<float,4> = 0;
+        virtual auto bounding_box() const -> std::array<std::array<float,2>,4> = 0;
         virtual auto bounding_circle() const -> std::array<float,3> = 0;
 
         void rotate(float angle){
-            auto box = bounding_box();
             _angle = angle;
-            _strategy->rotate(angle,box);
         };
         
         auto angle() const -> float{
@@ -102,26 +101,42 @@ struct PRect : public PDrawable{
               float w, float h, 
               bool fill = false, 
               std::shared_ptr<PDrawStrategy> strategy = std::make_shared<PDrawCartesianStrategy>())
-            : PDrawable(x,y,fill,strategy), w(w), h(h){
+            : PDrawable(x + w/2,y + h/2,fill,strategy), w(w), h(h){
         }
 
         void draw_fill(std::shared_ptr<SDL_Renderer> renderer) override{
-            for(float y = _y; y < _y + h; y+=1){
-                for(float x = _x; x < _x + w; x+=1){
-                    draw_point(renderer, x, y);
+            for(float y = _y - h/2; y < _y + h/2; y+=1){
+                for(float x = _x -x/2; x < _x + w/2; x+=1){
+                    const auto point = rotate_point(_x,_y,x,y,degree_to_radian(_angle));
+                    draw_point(renderer, point[0], point[1]);
                 }
             }
         }
 
         void draw_empty(std::shared_ptr<SDL_Renderer> renderer) override{
-            draw_line(renderer, _x, _y, _x+w, _y);
-            draw_line(renderer, _x+w, _y, _x+w, _y+h);
-            draw_line(renderer, _x+w, _y+h, _x, _y+h);
-            draw_line(renderer, _x, _y+h, _x, _y);
+            const auto top_left    = rotate_point(_x,_y,_x-w/2,_y-h/2,degree_to_radian(_angle));
+            const auto top_right   = rotate_point(_x,_y,_x+w/2,_y-h/2,degree_to_radian(_angle));
+            const auto bottom_left = rotate_point(_x,_y,_x-w/2,_y+h/2,degree_to_radian(_angle));
+            const auto bottom_right= rotate_point(_x,_y,_x+w/2,_y+h/2,degree_to_radian(_angle));
+            draw_line(renderer, top_left[0], top_left[1], top_right[0], top_right[1]);
+            draw_line(renderer, top_right[0], top_right[1], bottom_right[0], bottom_right[1]);
+            draw_line(renderer, bottom_right[0], bottom_right[1], bottom_left[0], bottom_left[1]);
+            draw_line(renderer, bottom_left[0], bottom_left[1], top_left[0], top_left[1]);
         }
 
-        auto bounding_box() const -> std::array<float,4> override{
-            return {_x, _y, w, h};
+        auto bounding_box() const -> std::array<std::array<float,2>,4> override{
+            const float angle_rad = degree_to_radian(_angle);
+            const float x1 = _x - w/2; 
+            const float y1 = _y - h/2;
+            const float x2 = _x + w/2;
+            const float y2 = _y + h/2;
+            
+            const auto top_left     = rotate_point(_x,_y,x1,y1,angle_rad);
+            const auto top_right    = rotate_point(_x,_y,x2,y1,angle_rad);
+            const auto bottom_left  = rotate_point(_x,_y,x1,y2,angle_rad);
+            const auto bottom_right  = rotate_point(_x,_y,x2,y2,angle_rad);
+            
+            return {{top_left, top_right, bottom_right, bottom_left}};
         }
 
         auto bounding_circle() const -> std::array<float,3> override{
@@ -129,7 +144,7 @@ struct PRect : public PDrawable{
         }
 
     private:
-        float  w, h;
+        float w, h;
 };
 
 struct PRectIso: public PRect{
@@ -174,8 +189,18 @@ struct PCircle : public PDrawable{
             }
         }
 
-        auto bounding_box() const -> std::array<float,4> override{
-            return {_x-r, _y-r, r+r, r+r};
+        auto bounding_box() const -> std::array<std::array<float,2>,4> override{
+            //calculate the 4 points of the bounding box
+            const float x1 = _x - r;
+            const float y1 = _y - r;
+            const float x2 = _x + r;
+            const float y2 = _y + r;
+            const auto top_left = rotate_point(_x,_y,x1,y1,degree_to_radian(_angle));
+            const auto top_right = rotate_point(_x,_y,x2,y1,degree_to_radian(_angle));
+            const auto bottom_left = rotate_point(_x,_y,x1,y2,degree_to_radian(_angle));
+            const auto bottom_right = rotate_point(_x,_y,x2,y2,degree_to_radian(_angle));
+
+            return {{top_left, top_right, bottom_left, bottom_right}};
         }
 
         auto bounding_circle() const -> std::array<float,3> override{
