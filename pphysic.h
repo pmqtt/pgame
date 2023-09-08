@@ -100,6 +100,7 @@ class PPhysicObject {
         }
 
         void move(float delta_time){
+            const float correction_delta_time = 0.01;
             if(delta_time == 0){
                 return;
             }
@@ -107,7 +108,7 @@ class PPhysicObject {
                 return;
             }
             if( _colide  ){
-                delta_time += 0.01;
+                delta_time += correction_delta_time;
                 auto collision_normal = normalize(_colision->normals);
                 const float dot_product = _velocity[0] * collision_normal[0] + _velocity[1] * collision_normal[1];
                 _velocity[0] -= (1 + _restition) * dot_product * collision_normal[0];
@@ -120,7 +121,7 @@ class PPhysicObject {
             if( NEAR_ZERO(_velocity[0]) ){
                 _velocity[0] = 0;
                 if( _colide ){
-                    delta_time -= 0.05;
+                    delta_time -= correction_delta_time;
                 }
             }
 
@@ -130,7 +131,7 @@ class PPhysicObject {
                 y = 0;
                 _velocity[1] = 0.001;
                 if(_colide){
-                    delta_time -= 0.05;
+                    delta_time -= 0.01;
                 }
             }
             _drawable->add(std::array<float,2>{x,y});
