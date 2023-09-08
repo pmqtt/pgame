@@ -107,7 +107,7 @@ class PPhysicObject {
                 return;
             }
             if( _colide  ){
-                delta_time += 0.05;
+                delta_time += 0.01;
                 auto collision_normal = normalize(_colision->normals);
                 const float dot_product = _velocity[0] * collision_normal[0] + _velocity[1] * collision_normal[1];
                 _velocity[0] -= (1 + _restition) * dot_product * collision_normal[0];
@@ -129,6 +129,9 @@ class PPhysicObject {
             if(abs(_velocity[1]) < 0.001){
                 y = 0;
                 _velocity[1] = 0.001;
+                if(_colide){
+                    delta_time -= 0.05;
+                }
             }
             _drawable->add(std::array<float,2>{x,y});
         }
