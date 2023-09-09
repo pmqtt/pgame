@@ -1,31 +1,23 @@
 #ifndef PPATH_H
 #define PPATH_H
-#include <vector>
 #include <array>
+#include <vector>
 
-struct PPath{
-    public:
-        PPath(): _loop(false) {}
-        
-        void add(const std::array<float,2> &v){
-            _points.push_back(v);
-        }
+struct PPath {
+   public:
+	PPath() : _loop(false) {}
 
-        void loop(bool loop){
-            this->_loop = loop;
-        }
+	void add(const std::array<float, 2> &v) { _points.push_back(v); }
 
-        auto loop() const -> bool{
-            return _loop;
-        }
+	void loop(bool loop) { this->_loop = loop; }
 
-        auto points() const -> const std::vector<std::array<float,2>>&{
-            return _points;
-        }
+	auto loop() const -> bool { return _loop; }
 
-    private:
-        bool _loop;
-        std::vector<std::array<float,2>> _points;
+	auto points() const -> const std::vector<std::array<float, 2>> & { return _points; }
+
+   private:
+	bool _loop;
+	std::vector<std::array<float, 2>> _points;
 };
 
 #endif
