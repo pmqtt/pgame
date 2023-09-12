@@ -40,7 +40,8 @@ class PEventLoop {
 	auto physics_objects() const -> std::map<std::string, std::shared_ptr<PPhysicObject>> { return _physic_objects; }
 
 	void add_physics_object(const std::string& name, std::shared_ptr<PPhysicObject> physic) {
-		_physic_objects[name] = physic;
+		physic->set_timer(_animation_timer);
+        _physic_objects[name] = physic;
 		_moveables["physic_" + name] = physic->drawable();
 	}
 

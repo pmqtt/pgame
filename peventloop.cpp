@@ -42,5 +42,8 @@ void PEventLoop::run() {
 			animation.second->draw(this, _renderer);
 		}
 		SDL_RenderPresent(_renderer.get());
+        if(_delta_time < 1000 / 60) {
+            SDL_Delay(1000 / 60 - _delta_time);
+        }
 	}
 }

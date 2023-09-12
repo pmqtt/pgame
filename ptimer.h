@@ -1,11 +1,15 @@
 #ifndef PTIMER_H
 #define PTIMER_H
 #include <SDL2/SDL.h>
-
 #include <chrono>
 #include <iostream>
-
 #include "pmath.h"
+
+constexpr auto cast_mu_to_sec(unsigned long long mu) -> float {
+    return mu / 1000000.0f;
+}
+
+
 struct PTimer {
 	PTimer() = default;
 
@@ -15,12 +19,12 @@ struct PTimer {
 		const auto current = std::chrono::high_resolution_clock::now();
 		const auto mu_delta = std::chrono::duration_cast<std::chrono::microseconds>(current - _start).count();
 		_start = current;
-		float x = mu_delta / (1000000.0f);
-		return x;
+        _current_time += mu_delta;
+		return cast_mu_to_sec(mu_delta);
 	}
 
    private:
-	int _startTicks;
+	unsigned long long  _current_time = 0.0;
 	std::chrono::high_resolution_clock::time_point _start;
 	unsigned int _mu_sum;
 };

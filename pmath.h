@@ -12,6 +12,9 @@ constexpr auto degree_to_radian(float degree) -> float { return degree * M_PI / 
 
 constexpr auto radian_to_degree(float radian) -> float { return radian * 180 / M_PI; }
 
+constexpr auto EPSILON = std::numeric_limits<float>::epsilon();
+
+
 // angle in degree
 // return Direction of angle
 enum class P_DIRECTION {

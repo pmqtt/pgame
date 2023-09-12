@@ -16,6 +16,16 @@ struct PDrawable {
 	PDrawable(float x, float y, bool fill, std::shared_ptr<PDrawStrategy> strategy)
 		: _color({255, 0, 0, 255}), _x(x), _y(y), _fill(fill), _strategy(strategy), _changed(true), _angle(0) {}
 
+    PDrawable(const PDrawable& a){
+        _color = a._color;
+        _x = a._x;
+        _y = a._y;
+        _fill = a._fill;
+        _strategy = a._strategy;
+        _changed = a._changed;
+        _angle = a._angle;
+    }
+
 	void draw(std::shared_ptr<SDL_Renderer> renderer) {
 		SDL_SetRenderDrawColor(renderer.get(), _color[0], _color[1], _color[2], _color[3]);
 		if (_fill) {
@@ -65,6 +75,8 @@ struct PDrawable {
 
 	auto angle() const -> float { return _angle; }
 
+    virtual auto clone() const -> std::shared_ptr<PDrawable> { return nullptr;}
+
    protected:
 	std::array<unsigned char, 4> _color;
 	float _x;
@@ -80,6 +92,11 @@ struct PRect : public PDrawable {
 	PRect(float x, float y, float w, float h, bool fill = false,
 		  std::shared_ptr<PDrawStrategy> strategy = std::make_shared<PDrawCartesianStrategy>())
 		: PDrawable(x + w / 2, y + h / 2, fill, strategy), w(w), h(h) {}
+
+    PRect(const PRect& a) : PDrawable(a){
+        w = a.w;
+        h = a.h;
+    }
 
 	void draw_fill(std::shared_ptr<SDL_Renderer> renderer) override {
 		for (float y = _y - h / 2; y < _y + h / 2; y += 1) {
@@ -119,6 +136,10 @@ struct PRect : public PDrawable {
 	auto bounding_circle() const -> std::array<float, 3> override {
 		return {_x + w / 2, _y + h / 2, std::sqrt(w * w + h * h) / 2};
 	}
+
+    auto clone() const -> std::shared_ptr<PDrawable> override{
+        return std::make_shared<PRect>(*this);
+    }
 
    private:
 	float w, h;

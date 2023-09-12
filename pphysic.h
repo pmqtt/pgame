@@ -7,6 +7,7 @@
 #include "pcolider.h"
 #include "pmath.h"
 #include "pprimitive.h"
+#include "ptimer.h"
 
 class PPhysicObject;
 
@@ -46,11 +47,28 @@ class PPhysicObject {
 		  _velocity_direction(0),
 		  _restition(1),
 		  _colider(colider),
-		  _colision(nullptr) {
+		  _colision(nullptr){
 		_colide = false;
 	}
 
+    PPhysicObject(const PPhysicObject& a){
+        _drawable = a._drawable->clone();
+        _gravity = a._gravity;
+        _velocity = a._velocity;
+        _velocity_direction = a._velocity_direction;
+        _restition = a._restition;
+        _acceleration = a._acceleration;
+        _colider = a._colider;
+        _colision = a._colision;
+        _colide = a._colide;
+        _timer = a._timer;
+    }
+
 	virtual ~PPhysicObject() = default;
+
+    void set_timer(const PTimer& timer){
+        _timer = timer;
+    }
 
 	// Set the gravity for this object in pixels per second
 	void gravity(float gravity) { _gravity = gravity; }
@@ -85,17 +103,55 @@ class PPhysicObject {
 
 	auto colide(std::shared_ptr<PPhysicObject> other) -> bool {
 		if (_colider) {
-			_colide = _colider->colide(_drawable, other->_drawable);
-			if (_colide) {
-				auto point = std::array<float, 2>{_drawable->x(), _drawable->y()};
-				_colision = std::make_shared<PColision>(point, velocity_direction(), other, _colider->normals());
-				return true;
-			}
+            float t = compute_toi(other);
+            if(t < 0.0){
+                _colide = false;
+                _colision = nullptr;
+                return false;
+            }
+            _colide = false;
+            move(t*_timer.delta_ticks());
+			_colide = true;
+            auto point = std::array<float, 2>{_drawable->x(), _drawable->y()};
+			_colision = std::make_shared<PColision>(point, velocity_direction(), other, _colider->normals());
+			return true;
 		}
 		_colide = false;
 		_colision = nullptr;
 		return false;
 	}
+
+    auto are_colliding( std::shared_ptr<PPhysicObject> other, float t) -> bool {
+        PPhysicObject tmp = PPhysicObject(*this);
+        std::shared_ptr<PPhysicObject> drawable = std::make_shared<PPhysicObject>( tmp );
+        drawable->_colide = false;
+        drawable->move(t*_timer.delta_ticks()-2*EPSILON);
+        if(_colider->colide(drawable->_drawable, other->_drawable)){
+            return true;
+        }
+        return false;
+    }
+
+    auto compute_toi(std::shared_ptr<PPhysicObject> other) ->float{
+        if(_colider){
+            float low = 0;
+            float high = 1; // Assuming we are checking for TOI within the next frame, which is normalized to [0, 1]
+            while (high - low > EPSILON) {
+                float mid = (low + high) / 2.0;
+                if (are_colliding(other,mid)) {
+                    high = mid;
+                } else {
+                    low = mid;
+                }
+            }
+            if( !are_colliding(other,1.0) ) {
+                return -1.0; 
+            }
+            return (low + high) / 2.0;
+        }
+        return -1.0;
+    }
+
 
 	void move(float delta_time) {
 		// WORKAROUND: move the object a little bit more to avoid multiple colision with the same object
@@ -109,11 +165,17 @@ class PPhysicObject {
 		if (_colide) {
 			delta_time += correction_delta_time;
             auto mtv = _colider->mtv();
+            auto collision_normal = normalize(_colision->normals);
+             // Überprüfen Sie, ob die Kollision von der Seite aufgetreten ist
+            if (abs(collision_normal[0]) > abs(collision_normal[1])) {
+                mtv[1] = 0;  // Setzen Sie die vertikale Komponente des MTV auf 0
+            } else {
+                mtv[0] = 0;  // Setzen Sie die horizontale Komponente des MTV auf 0
+            }
             if ((_velocity[0] * mtv[0] + _velocity[1] * mtv[1]) < 0) {
                 mtv[0] = -mtv[0];
                 mtv[1] = -mtv[1];
             }
-            auto collision_normal = normalize(_colision->normals);
 			const float dot_product = _velocity[0] * collision_normal[0] + _velocity[1] * collision_normal[1];
 			_velocity[0] -= (1 + _restition) * dot_product * collision_normal[0];
 			_velocity[1] -= (1 + _restition) * dot_product * collision_normal[1];
@@ -155,6 +217,7 @@ class PPhysicObject {
 	float _acceleration;
 	std::shared_ptr<PPhysicObject> _colide_with;
 	std::shared_ptr<PColision> _colision;
+    PTimer _timer;
 };
 
 #endif	// PPHYSIC_H
