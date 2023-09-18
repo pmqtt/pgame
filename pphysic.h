@@ -106,7 +106,6 @@ class PPhysicObject {
 		if (_colider) {
             float t = compute_toi(other,time);
             if(t < 0.0){
-                std::cout<<"\n";
                 _colide = false;
                 _colision = nullptr;
                 return false;
