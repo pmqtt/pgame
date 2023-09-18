@@ -1,13 +1,14 @@
 #ifndef PPHYSIC_H
 #define PPHYSIC_H
 #include <SDL2/SDL.h>
-
 #include <tuple>
+#include <thread>
 
 #include "pcolider.h"
 #include "pmath.h"
 #include "pprimitive.h"
 #include "ptimer.h"
+
 
 class PPhysicObject;
 
@@ -101,16 +102,18 @@ class PPhysicObject {
 
 	auto collision_detected() const -> bool { return _colide; }
 
-	auto colide(std::shared_ptr<PPhysicObject> other) -> bool {
+	auto colide(std::shared_ptr<PPhysicObject> other,float time) -> bool {
 		if (_colider) {
-            float t = compute_toi(other);
+            std::cout<<"("<<_drawable->x()<<","<<_drawable->y()<<") =>";
+            float t = compute_toi(other,time);
             if(t < 0.0){
+                std::cout<<"\n";
                 _colide = false;
                 _colision = nullptr;
                 return false;
             }
             _colide = false;
-            move(t*_timer.delta_ticks());
+            move(t*time);
 			_colide = true;
             auto point = std::array<float, 2>{_drawable->x(), _drawable->y()};
 			_colision = std::make_shared<PColision>(point, velocity_direction(), other, _colider->normals());
@@ -121,33 +124,33 @@ class PPhysicObject {
 		return false;
 	}
 
-    auto are_colliding( std::shared_ptr<PPhysicObject> other, float t) -> bool {
-        PPhysicObject tmp = PPhysicObject(*this);
-        std::shared_ptr<PPhysicObject> drawable = std::make_shared<PPhysicObject>( tmp );
+    auto are_colliding( std::shared_ptr<PPhysicObject> other, float t,float time) -> bool {
+        std::shared_ptr<PPhysicObject> drawable = std::make_shared<PPhysicObject>( *this );
         drawable->_colide = false;
-        drawable->move(t*_timer.delta_ticks()-2*EPSILON);
+        drawable->move(t*time);
         if(_colider->colide(drawable->_drawable, other->_drawable)){
             return true;
         }
         return false;
     }
 
-    auto compute_toi(std::shared_ptr<PPhysicObject> other) ->float{
+    auto compute_toi(std::shared_ptr<PPhysicObject> other,float time) ->float{
         if(_colider){
             float low = 0;
             float high = 1; // Assuming we are checking for TOI within the next frame, which is normalized to [0, 1]
             while (high - low > EPSILON) {
                 float mid = (low + high) / 2.0;
-                if (are_colliding(other,mid)) {
+                if (are_colliding(other,mid,time)) {
                     high = mid;
                 } else {
                     low = mid;
                 }
             }
-            if( !are_colliding(other,1.0) ) {
+            if( !are_colliding(other,1.0,time) ) {
                 return -1.0; 
             }
-            return (low + high) / 2.0;
+            float res = (low + high) / 2.0;
+            return res;
         }
         return -1.0;
     }
@@ -164,18 +167,7 @@ class PPhysicObject {
 		}
 		if (_colide) {
 			delta_time += correction_delta_time;
-            auto mtv = _colider->mtv();
             auto collision_normal = normalize(_colision->normals);
-             // Überprüfen Sie, ob die Kollision von der Seite aufgetreten ist
-            if (abs(collision_normal[0]) > abs(collision_normal[1])) {
-                mtv[1] = 0;  // Setzen Sie die vertikale Komponente des MTV auf 0
-            } else {
-                mtv[0] = 0;  // Setzen Sie die horizontale Komponente des MTV auf 0
-            }
-            if ((_velocity[0] * mtv[0] + _velocity[1] * mtv[1]) < 0) {
-                mtv[0] = -mtv[0];
-                mtv[1] = -mtv[1];
-            }
 			const float dot_product = _velocity[0] * collision_normal[0] + _velocity[1] * collision_normal[1];
 			_velocity[0] -= (1 + _restition) * dot_product * collision_normal[0];
 			_velocity[1] -= (1 + _restition) * dot_product * collision_normal[1];
@@ -191,14 +183,11 @@ class PPhysicObject {
 			}
 		}
 
-		float x = _velocity[0] * delta_time;
+        float x = _velocity[0] * delta_time;
 		float y = _velocity[1] * delta_time;
 		if (abs(_velocity[1]) < 0.001) {
 			y = 0;
-			_velocity[1] = 0.001;
-			if (_colide) {
-				delta_time -= 0.01;
-			}
+			_velocity[1] = 0.00001;
 		}
 		_drawable->add(std::array<float, 2>{x, y});
 	}
