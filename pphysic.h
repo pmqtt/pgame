@@ -104,7 +104,6 @@ class PPhysicObject {
 
 	auto colide(std::shared_ptr<PPhysicObject> other,float time) -> bool {
 		if (_colider) {
-            std::cout<<"("<<_drawable->x()<<","<<_drawable->y()<<") =>";
             float t = compute_toi(other,time);
             if(t < 0.0){
                 std::cout<<"\n";
