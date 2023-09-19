@@ -6,12 +6,12 @@ struct PressEscape : public PKeyDownListener {
 		if (event.key.keysym.sym == SDLK_ESCAPE) {
 			loop->quit();
 		}
-        if (event.key.keysym.sym == SDLK_SPACE) {
-            loop->stop();
-        }
-        if (event.key.keysym.sym == SDLK_RETURN) {
-            loop->resume();
-        }
+		if (event.key.keysym.sym == SDLK_SPACE) {
+			loop->stop();
+		}
+		if (event.key.keysym.sym == SDLK_RETURN) {
+			loop->resume();
+		}
 	}
 };
 

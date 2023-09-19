@@ -3,23 +3,19 @@
 #include <optional>
 #include <tuple>
 
-#include "pprimitive.h"
 #include "pmath.h"
+#include "pprimitive.h"
 
 struct PColider {
 	virtual auto colide(std::shared_ptr<PDrawable> p1, std::shared_ptr<PDrawable> p2) const -> bool = 0;
 	virtual auto normals() const -> PPoint2D { return {0, 0}; }
 	virtual auto normals2() const -> PPoint2D { return {0, 0}; }
 
-	virtual auto edge_point1() const -> std::pair<PPoint2D, PPoint2D> {
-		return {{0, 0}, {0, 0}};
-	}
+	virtual auto edge_point1() const -> std::pair<PPoint2D, PPoint2D> { return {{0, 0}, {0, 0}}; }
 
-	virtual auto edge_point2() const -> std::pair<PPoint2D, PPoint2D> {
-		return {{0, 0}, {0, 0}};
-	}
+	virtual auto edge_point2() const -> std::pair<PPoint2D, PPoint2D> { return {{0, 0}, {0, 0}}; }
 
-    virtual auto mtv() const -> PPoint2D { return {0, 0}; }
+	virtual auto mtv() const -> PPoint2D { return {0, 0}; }
 };
 
 struct PBoxColider : public PColider {
@@ -82,7 +78,6 @@ struct PCircleColider : public PColider {
 
 using PVertices2D = std::array<PPoint2D, 4>;
 
-
 constexpr auto dot(const PPoint2D &p1, const PPoint2D &p2) -> float { return p1[0] * p2[0] + p1[1] * p2[1]; }
 
 constexpr auto perpendicular(const PPoint2D &p) -> PPoint2D { return {-p[1], p[0]}; }
@@ -104,7 +99,7 @@ struct PSatColider : PColider {
 			PPoint2D point2 = shape1[(i + 1) % shape1.size()];
 			PPoint2D edge = point2 - point1;
 			PPoint2D axis = perpendicular(edge);
-            axis.normalize();
+			axis.normalize();
 			float overlap = overlapAmount(axis, shape1, shape2);
 			if (overlap < 0) {
 				return false;
@@ -122,7 +117,7 @@ struct PSatColider : PColider {
 			PPoint2D point2 = shape2[(i + 1) % shape2.size()];
 			PPoint2D edge = point2 - point1;
 			PPoint2D axis = perpendicular(edge);
-            axis.normalize();
+			axis.normalize();
 			float overlap = overlapAmount(axis, shape1, shape2);
 			if (overlap < 0) {
 				return false;
@@ -136,12 +131,12 @@ struct PSatColider : PColider {
 		}
 		if (smallestOverlap1 < smallestOverlap2) {
 			_collision_normal = smallestOverlapAxis1;
-            _collision_normal2 = smallestOverlapAxis2;
-            _mtv = {smallestOverlap1 * smallestOverlapAxis1[0], smallestOverlap1 * smallestOverlapAxis1[1]};
+			_collision_normal2 = smallestOverlapAxis2;
+			_mtv = {smallestOverlap1 * smallestOverlapAxis1[0], smallestOverlap1 * smallestOverlapAxis1[1]};
 		} else {
 			_collision_normal = smallestOverlapAxis2;
-            _collision_normal2 = smallestOverlapAxis1;
-            _mtv = {smallestOverlap2 * smallestOverlapAxis2[0], smallestOverlap2 * smallestOverlapAxis2[1]};
+			_collision_normal2 = smallestOverlapAxis1;
+			_mtv = {smallestOverlap2 * smallestOverlapAxis2[0], smallestOverlap2 * smallestOverlapAxis2[1]};
 		}
 		return true;
 	}
@@ -168,15 +163,11 @@ struct PSatColider : PColider {
 	auto normals() const -> PPoint2D override { return _collision_normal; }
 	auto normals2() const -> PPoint2D override { return _collision_normal2; }
 
-	auto edge_point1() const -> std::pair<PPoint2D, PPoint2D> override {
-		return {_edge_point1, _edge_point2};
-	}
+	auto edge_point1() const -> std::pair<PPoint2D, PPoint2D> override { return {_edge_point1, _edge_point2}; }
 
-	auto edge_point2() const -> std::pair<PPoint2D, PPoint2D> override {
-		return {_edge_point3, _edge_point4};
-	}
+	auto edge_point2() const -> std::pair<PPoint2D, PPoint2D> override { return {_edge_point3, _edge_point4}; }
 
-    auto mtv() const -> PPoint2D override { return _mtv; }
+	auto mtv() const -> PPoint2D override { return _mtv; }
 
    private:
 	mutable PPoint2D _collision_normal = {0.0f, 0.0f};
@@ -185,7 +176,7 @@ struct PSatColider : PColider {
 	mutable PPoint2D _edge_point2 = {0.0f, 0.0f};
 	mutable PPoint2D _edge_point3 = {0.0f, 0.0f};
 	mutable PPoint2D _edge_point4 = {0.0f, 0.0f};
-    mutable PPoint2D _mtv = {0.0f, 0.0f};
+	mutable PPoint2D _mtv = {0.0f, 0.0f};
 };
 
 #endif

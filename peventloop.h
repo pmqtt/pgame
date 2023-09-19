@@ -41,7 +41,7 @@ class PEventLoop {
 
 	void add_physics_object(const std::string& name, std::shared_ptr<PPhysicObject> physic) {
 		physic->set_timer(_animation_timer);
-        _physic_objects[name] = physic;
+		_physic_objects[name] = physic;
 		_moveables["physic_" + name] = physic->drawable();
 	}
 
@@ -53,13 +53,13 @@ class PEventLoop {
 
 	auto animation_timer() -> PTimer& { return _animation_timer; }
 
-	auto delta_time()const -> double { return _delta_time; }
+	auto delta_time() const -> double { return _delta_time; }
 
 	void run();
 
-    void stop();
+	void stop();
 
-    void resume();
+	void resume();
 
    private:
 	bool _quit;
@@ -72,7 +72,7 @@ class PEventLoop {
 	std::map<std::string, std::shared_ptr<PPhysicObject>> _physic_objects;
 	PTimer _animation_timer;
 	double _delta_time;
-    bool _stopped = false;
+	bool _stopped = false;
 };
 
 #endif
