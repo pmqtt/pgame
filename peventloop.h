@@ -9,7 +9,7 @@
 #include <vector>
 
 #include "panimation.h"
-#include "pphysic.h"
+#include "pengine.h"
 #include "pprimitive.h"
 #include "ptimer.h"
 
@@ -37,11 +37,10 @@ class PEventLoop {
 
 	auto moveables() const -> std::map<std::string, std::shared_ptr<PDrawable>> { return _moveables; }
 
-	auto physics_objects() const -> std::map<std::string, std::shared_ptr<PPhysicObject>> { return _physic_objects; }
+	auto physics_objects() -> std::map<std::string, std::shared_ptr<PPhysicObject>> { return _engine.objects(); }
 
 	void add_physics_object(const std::string& name, std::shared_ptr<PPhysicObject> physic) {
-		physic->set_timer(_animation_timer);
-		_physic_objects[name] = physic;
+        _engine.add_physic_object(name, physic);
 		_moveables["physic_" + name] = physic->drawable();
 	}
 
@@ -69,7 +68,8 @@ class PEventLoop {
 	std::shared_ptr<SDL_Renderer> _renderer;
 	std::map<std::string, std::shared_ptr<PDrawable>> _moveables;
 	std::map<std::string, std::shared_ptr<PAnimation>> _animations;
-	std::map<std::string, std::shared_ptr<PPhysicObject>> _physic_objects;
+	//std::map<std::string, std::shared_ptr<PPhysicObject>> _physic_objects;
+    PEngine _engine;
 	PTimer _animation_timer;
 	double _delta_time;
 	bool _stopped = false;

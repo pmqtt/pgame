@@ -97,6 +97,11 @@ class PPhysicObject {
 
 	auto collision_detected() const -> bool { return _colide; }
 
+    auto reset_collision() -> void { 
+        _colide = false; 
+        _colision = nullptr;
+    }
+
 	auto colide(std::shared_ptr<PPhysicObject> other, float time) -> bool {
 		if (_colider) {
 			float t = compute_toi(other, time);
@@ -148,7 +153,7 @@ class PPhysicObject {
 
 	void move(float delta_time) {
 		// WORKAROUND: move the object a little bit more to avoid multiple colision with the same object
-		const float correction_delta_time = 0.01;
+		const float correction_delta_time = 0.00;
 		if (delta_time == 0) {
 			return;
 		}
@@ -159,10 +164,10 @@ class PPhysicObject {
 			delta_time += correction_delta_time;
 			auto collision_normal = _colision->normals.normalized();
 			const float dot_product = _velocity[0] * collision_normal[0] + _velocity[1] * collision_normal[1];
-            std::cout<<"velocity PRE:"<<_velocity<< "=>";
+            std::cout<<"PRE V:"<<_velocity<< " => ";
 			_velocity[0] -= (1 + _restition) * dot_product * collision_normal[0];
 			_velocity[1] -= (1 + _restition) * dot_product * collision_normal[1];
-            std::cout<<"velocity POST:"<<_velocity<<"\n";
+            std::cout<<"POST V:"<<_velocity<< " \n ";
 		} else {
 			_velocity[1] += _gravity * delta_time;
 			_velocity[0] += _acceleration * delta_time;

@@ -27,17 +27,8 @@ void PEventLoop::run() {
 		}
 		SDL_SetRenderDrawColor(_renderer.get(), 0, 0, 0, 255);
 		SDL_RenderClear(_renderer.get());
-
-		for (auto& iter : _physic_objects) {
-			for (auto& sIter : _physic_objects) {
-				if (iter.first != sIter.first) {
-					if (iter.second->colide(sIter.second, _delta_time)) {
-						break;
-					}
-				}
-			}
-		}
-		for (auto& physic : _physic_objects) {
+		
+        for (auto& physic : _engine.objects()) {
 			physic.second->move(_delta_time);
 		}
 		for (auto& moveable : _moveables) {
@@ -46,6 +37,8 @@ void PEventLoop::run() {
 		for (auto& animation : _animations) {
 			animation.second->draw(this, _renderer);
 		}
+        
+        _engine.handle_collision(_delta_time);
 
 		SDL_RenderPresent(_renderer.get());
 
