@@ -29,8 +29,8 @@ void PEventLoop::run() {
 		SDL_RenderClear(_renderer.get());
 		
         for (auto& physic : _engine.objects()) {
-			physic.second->move(_delta_time);
-		}
+  			physic.second->move(_delta_time);
+  		}
 		for (auto& moveable : _moveables) {
 			moveable.second->draw(_renderer);
 		}

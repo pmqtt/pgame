@@ -11,8 +11,10 @@
 
 
 struct PTimeToInpact{
-    PTimeToInpact(float time, std::shared_ptr<PPhysicObject> object1, std::shared_ptr<PPhysicObject> object2)
-        : time(time), object1(object1),object2(object2) {}
+    PTimeToInpact(const std::string & name, float time, std::shared_ptr<PPhysicObject> object1, std::shared_ptr<PPhysicObject> object2)
+        : name(name), time(time), object1(object1),object2(object2) {}
+    PTimeToInpact() = default;
+    std::string name;
     float time;
     std::shared_ptr<PPhysicObject> object1;
     std::shared_ptr<PPhysicObject> object2;
@@ -27,37 +29,45 @@ public:
         _physic_objects[name] = physic;
     }
 
-    auto objects() -> std::map<std::string, std::shared_ptr<PPhysicObject>> &{
-        return _physic_objects;
+    auto objects() -> std::map<std::string, std::shared_ptr<PPhysicObject>> {
+        std::map<std::string, std::shared_ptr<PPhysicObject>> result;
+        for(auto& iter : _physic_objects){
+            if(std::find(_collison_names.begin(), _collison_names.end(), iter.first) == _collison_names.end()){
+                result[iter.first] = iter.second;
+            }
+        }
+        return result;
     }
 
     void handle_collision(double delta_time){
         std::size_t elements_count = _physic_objects.size();
         std::vector<PTimeToInpact> collisions;
+        PTimeToInpact last_collision;
+        _collison_names.clear();
         do{
-        std::cout<<"handle collision"<<std::endl;
         collisions.clear();
 		for (auto& iter : _physic_objects) {
 			for (auto& sIter : _physic_objects) {
 				if (iter.first != sIter.first) {
 					float t = iter.second->compute_toi(sIter.second, delta_time);
-                    if(t >= 0.0){
-                        std::cout<<"collision "<< iter.first<< " "<< sIter.first<< " "<< t<<std::endl;
-                        collisions.emplace_back(t, iter.second, sIter.second);
+                    if(t >= 0.0 && last_collision.object1 != iter.second && last_collision.object2 != sIter.second){
+                        collisions.emplace_back(iter.first, t, iter.second, sIter.second);
                     }else{
                         iter.second->reset_collision();
                     }
-				}
+				}else{
+                    iter.second->reset_collision();
+                }
 			}
 		}
         std::sort(collisions.begin(), collisions.end(), [](auto& a, auto& b){
             return a.time < b.time;
         });
-        if(collisions.size() > 0){
-        //for(auto& iter : collisions){
-            collisions[0].object1->colide(collisions[0].object2,delta_time);
-            collisions[0].object1->move(delta_time);
-        //}
+        for(std::size_t i = 0; i < collisions.size(); ++i){
+            collisions[i].object1->colide(collisions[i].object2,delta_time);
+            collisions[i].object1->move(delta_time);
+            last_collision = collisions[i];
+            _collison_names.push_back(collisions[i].name);
         }
         }while(collisions.size() > 0);
 		
@@ -65,6 +75,7 @@ public:
 
 private:
 	std::map<std::string, std::shared_ptr<PPhysicObject>> _physic_objects;
+    std::vector<std::string> _collison_names;
 };
 
 #endif //PENGINE_H
