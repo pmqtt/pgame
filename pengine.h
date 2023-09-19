@@ -1,6 +1,7 @@
 #ifndef PENGINE_H
 #define PENGINE_H
 #include <algorithm>
+#include <iostream>
 #include <map>
 #include <memory>
 #include <string>
@@ -33,6 +34,9 @@ public:
     void handle_collision(double delta_time){
         std::size_t elements_count = _physic_objects.size();
         std::vector<PTimeToInpact> collisions;
+        do{
+        std::cout<<"handle collision"<<std::endl;
+        collisions.clear();
 		for (auto& iter : _physic_objects) {
 			for (auto& sIter : _physic_objects) {
 				if (iter.first != sIter.first) {
@@ -49,9 +53,13 @@ public:
         std::sort(collisions.begin(), collisions.end(), [](auto& a, auto& b){
             return a.time < b.time;
         });
-        for(auto& iter : collisions){
-            iter.object1->colide(iter.object2,delta_time);
+        if(collisions.size() > 0){
+        //for(auto& iter : collisions){
+            collisions[0].object1->colide(collisions[0].object2,delta_time);
+            collisions[0].object1->move(delta_time);
+        //}
         }
+        }while(collisions.size() > 0);
 		
     }
 
