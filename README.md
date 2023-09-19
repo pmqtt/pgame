@@ -17,7 +17,8 @@ To set up PGame, follow these steps:
 
 1. Install SDL (Simple DirectMedia Layer).
 2. Ensure you have a C++ compiler that supports the C++17 standard.
-3. ```bash
+3.
+```bash
 cmake .
 make 
 ```
@@ -29,6 +30,7 @@ Navigate to the `test` directory:
 
 ```bash
 cd pgame/test
+```
 
 
 ## Contributing
