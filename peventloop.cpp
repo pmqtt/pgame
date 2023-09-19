@@ -27,18 +27,18 @@ void PEventLoop::run() {
 		}
 		SDL_SetRenderDrawColor(_renderer.get(), 0, 0, 0, 255);
 		SDL_RenderClear(_renderer.get());
-		
-        for (auto& physic : _engine.objects()) {
-  			physic.second->move(_delta_time);
-  		}
+
+		for (auto& physic : _engine.objects()) {
+			physic.second->move(_delta_time);
+		}
 		for (auto& moveable : _moveables) {
 			moveable.second->draw(_renderer);
 		}
 		for (auto& animation : _animations) {
 			animation.second->draw(this, _renderer);
 		}
-        
-        _engine.handle_collision(_delta_time);
+
+		_engine.handle_collision(_delta_time);
 
 		SDL_RenderPresent(_renderer.get());
 

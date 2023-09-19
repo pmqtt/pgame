@@ -17,13 +17,13 @@ struct PressRight : public PKeyDownListener {
 	}
 };
 
-auto create_physic_object(int x, int y, float vx,float vy) -> std::shared_ptr<PPhysicObject> {
-    auto drawable = std::make_shared<PRect>(x, y, 10, 10);
-    auto object = std::make_shared<PPhysicObject>(drawable, std::make_shared<PSatColider>());
-    object->gravity(98.1);
-    object->velocity(vx, vy);
-    object->restitution(0.6);
-    return object;
+auto create_physic_object(int x, int y, float vx, float vy) -> std::shared_ptr<PPhysicObject> {
+	auto drawable = std::make_shared<PRect>(x, y, 10, 10);
+	auto object = std::make_shared<PPhysicObject>(drawable, std::make_shared<PSatColider>());
+	object->gravity(98.1);
+	object->velocity(vx, vy);
+	object->restitution(0.6);
+	return object;
 }
 
 auto main(int argc, char** argv) -> int {
@@ -33,9 +33,10 @@ auto main(int argc, char** argv) -> int {
 	auto event_loop = window.create_event_loop();
 	event_loop.add_key_down_listener(std::make_shared<PressEscape>());
 	event_loop.add_key_down_listener(std::make_shared<PressRight>());
-    for(int i = 0; i < 10; ++i) {
-	    event_loop.add_physics_object("obj_a" + std::to_string(i), create_physic_object(i*20+11,i*20+11,30,0.001));
-    }
+	for (int i = 0; i < 10; ++i) {
+		event_loop.add_physics_object("obj_a" + std::to_string(i),
+									  create_physic_object(i * 20 + 11, i * 20 + 11, 30, 0.001));
+	}
 	auto object2 = std::make_shared<PPhysicObject>(std::make_shared<PRect>(0, 510, 800, 100, false));
 	event_loop.add_physics_object("obj2", object2);
 	event_loop.run();

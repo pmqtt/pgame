@@ -40,7 +40,7 @@ class PEventLoop {
 	auto physics_objects() -> std::map<std::string, std::shared_ptr<PPhysicObject>> { return _engine.objects(); }
 
 	void add_physics_object(const std::string& name, std::shared_ptr<PPhysicObject> physic) {
-        _engine.add_physic_object(name, physic);
+		_engine.add_physic_object(name, physic);
 		_moveables["physic_" + name] = physic->drawable();
 	}
 
@@ -68,8 +68,8 @@ class PEventLoop {
 	std::shared_ptr<SDL_Renderer> _renderer;
 	std::map<std::string, std::shared_ptr<PDrawable>> _moveables;
 	std::map<std::string, std::shared_ptr<PAnimation>> _animations;
-	//std::map<std::string, std::shared_ptr<PPhysicObject>> _physic_objects;
-    PEngine _engine;
+	// std::map<std::string, std::shared_ptr<PPhysicObject>> _physic_objects;
+	PEngine _engine;
 	PTimer _animation_timer;
 	double _delta_time;
 	bool _stopped = false;

@@ -97,10 +97,10 @@ class PPhysicObject {
 
 	auto collision_detected() const -> bool { return _colide; }
 
-    auto reset_collision() -> void { 
-        _colide = false; 
-        _colision = nullptr;
-    }
+	auto reset_collision() -> void {
+		_colide = false;
+		_colision = nullptr;
+	}
 
 	auto colide(std::shared_ptr<PPhysicObject> other, float time) -> bool {
 		if (_colider) {
@@ -164,10 +164,10 @@ class PPhysicObject {
 			delta_time += correction_delta_time;
 			auto collision_normal = _colision->normals.normalized();
 			const float dot_product = _velocity[0] * collision_normal[0] + _velocity[1] * collision_normal[1];
-            std::cout<<"PRE V:"<<_velocity<< " => ";
+			std::cout << "PRE V:" << _velocity << " => ";
 			_velocity[0] -= (1 + _restition) * dot_product * collision_normal[0];
 			_velocity[1] -= (1 + _restition) * dot_product * collision_normal[1];
-            std::cout<<"POST V:"<<_velocity<< " \n ";
+			std::cout << "POST V:" << _velocity << " \n ";
 		} else {
 			_velocity[1] += _gravity * delta_time;
 			_velocity[0] += _acceleration * delta_time;
