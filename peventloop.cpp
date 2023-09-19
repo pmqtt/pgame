@@ -37,7 +37,6 @@ void PEventLoop::run() {
 				}
 			}
 		}
-
 		for (auto& physic : _physic_objects) {
 			physic.second->move(_delta_time);
 		}
@@ -47,6 +46,7 @@ void PEventLoop::run() {
 		for (auto& animation : _animations) {
 			animation.second->draw(this, _renderer);
 		}
+
 		SDL_RenderPresent(_renderer.get());
 
 		int delay = (1000.0f / 60.0f) - (_delta_time / 1000.0f);

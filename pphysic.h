@@ -112,8 +112,6 @@ class PPhysicObject {
 			_colision = std::make_shared<PColision>(point, velocity_direction(), other, _colider->normals());
 			return true;
 		}
-		_colide = false;
-		_colision = nullptr;
 		return false;
 	}
 
@@ -161,8 +159,10 @@ class PPhysicObject {
 			delta_time += correction_delta_time;
 			auto collision_normal = _colision->normals.normalized();
 			const float dot_product = _velocity[0] * collision_normal[0] + _velocity[1] * collision_normal[1];
+            std::cout<<"velocity PRE:"<<_velocity<< "=>";
 			_velocity[0] -= (1 + _restition) * dot_product * collision_normal[0];
 			_velocity[1] -= (1 + _restition) * dot_product * collision_normal[1];
+            std::cout<<"velocity POST:"<<_velocity<<"\n";
 		} else {
 			_velocity[1] += _gravity * delta_time;
 			_velocity[0] += _acceleration * delta_time;
