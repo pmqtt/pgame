@@ -4,3 +4,6 @@
 * Movement Point for a rect is the center of the rect
 * SAT collision algorithm can now handle with all convex polygons
 * Implement TOI Time of inpact
+* peventloop->stop() rename to quit
+* peventloop->stop() stop the engine
+* peventloop->resume() start the engine after it was stopped

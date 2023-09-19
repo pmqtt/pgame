@@ -33,7 +33,7 @@ class PEventLoop {
 
 	void add_key_down_listener(std::shared_ptr<PKeyDownListener> listener) { _key_down_listeners.push_back(listener); }
 
-	void stop() { _quit = true; }
+	void quit() { _quit = true; }
 
 	auto moveables() const -> std::map<std::string, std::shared_ptr<PDrawable>> { return _moveables; }
 
@@ -57,6 +57,10 @@ class PEventLoop {
 
 	void run();
 
+    void stop();
+
+    void resume();
+
    private:
 	bool _quit;
 	std::list<SDL_Event> _events;
@@ -68,6 +72,7 @@ class PEventLoop {
 	std::map<std::string, std::shared_ptr<PPhysicObject>> _physic_objects;
 	PTimer _animation_timer;
 	double _delta_time;
+    bool _stopped = false;
 };
 
 #endif

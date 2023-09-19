@@ -6,7 +6,7 @@
 struct PressEscape : public PKeyDownListener {
 	void on_event(PEventLoop* loop, SDL_Event event) override {
 		if (event.key.keysym.sym == SDLK_ESCAPE) {
-			loop->stop();
+			loop->quit();
 		}
 	}
 };

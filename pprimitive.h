@@ -10,6 +10,7 @@
 #include "pdebug.h"
 #include "pdrawstrategy.h"
 #include "pmath.h"
+#include "ppoint2d.h"
 
 struct PDrawable {
    public:
@@ -68,7 +69,7 @@ struct PDrawable {
 
 	auto fill() const -> bool { return _fill; }
 
-	virtual auto bounding_box() const -> std::array<std::array<float, 2>, 4> = 0;
+	virtual auto bounding_box() const -> std::array<PPoint2D, 4> = 0;
 	virtual auto bounding_circle() const -> std::array<float, 3> = 0;
 
 	void rotate(float angle) { _angle = angle; };
@@ -118,7 +119,7 @@ struct PRect : public PDrawable {
 		draw_line(renderer, bottom_left[0], bottom_left[1], top_left[0], top_left[1]);
 	}
 
-	auto bounding_box() const -> std::array<std::array<float, 2>, 4> override {
+	auto bounding_box() const -> std::array<PPoint2D, 4> override {
 		const float angle_rad = degree_to_radian(_angle);
 		const float x1 = _x - w / 2;
 		const float y1 = _y - h / 2;
@@ -130,7 +131,7 @@ struct PRect : public PDrawable {
 		const auto bottom_left = rotate_point(_x, _y, x1, y2, angle_rad);
 		const auto bottom_right = rotate_point(_x, _y, x2, y2, angle_rad);
 
-		return {{top_left, top_right, bottom_right, bottom_left}};
+		return {top_left, top_right, bottom_right, bottom_left};
 	}
 
 	auto bounding_circle() const -> std::array<float, 3> override {
@@ -182,7 +183,7 @@ struct PCircle : public PDrawable {
 		}
 	}
 
-	auto bounding_box() const -> std::array<std::array<float, 2>, 4> override {
+	auto bounding_box() const -> std::array<PPoint2D, 4> override {
 		// calculate the 4 points of the bounding box
 		const float x1 = _x - r;
 		const float y1 = _y - r;
@@ -193,7 +194,7 @@ struct PCircle : public PDrawable {
 		const auto bottom_left = rotate_point(_x, _y, x1, y2, degree_to_radian(_angle));
 		const auto bottom_right = rotate_point(_x, _y, x2, y2, degree_to_radian(_angle));
 
-		return {{top_left, top_right, bottom_left, bottom_right}};
+		return {top_left, top_right, bottom_left, bottom_right};
 	}
 
 	auto bounding_circle() const -> std::array<float, 3> override { return {_x, _y, r}; }

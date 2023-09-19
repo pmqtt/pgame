@@ -22,6 +22,9 @@ void PEventLoop::run() {
 					break;
 			}
 		}
+        if(_stopped){
+            continue;
+        }
 		SDL_SetRenderDrawColor(_renderer.get(), 0, 0, 0, 255);
 		SDL_RenderClear(_renderer.get());
 
@@ -52,3 +55,12 @@ void PEventLoop::run() {
         }
 	}
 }
+
+void PEventLoop::stop(){
+    _stopped = true;
+}
+
+void PEventLoop::resume(){
+    _stopped = false;
+}
+

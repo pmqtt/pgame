@@ -4,21 +4,22 @@
 #include <tuple>
 
 #include "pprimitive.h"
+#include "pmath.h"
 
 struct PColider {
 	virtual auto colide(std::shared_ptr<PDrawable> p1, std::shared_ptr<PDrawable> p2) const -> bool = 0;
-	virtual auto normals() const -> std::array<float, 2> { return {{0, 0}}; }
-	virtual auto normals2() const -> std::array<float, 2> { return {{0, 0}}; }
+	virtual auto normals() const -> PPoint2D { return {0, 0}; }
+	virtual auto normals2() const -> PPoint2D { return {0, 0}; }
 
-	virtual auto edge_point1() const -> std::pair<std::array<float, 2>, std::array<float, 2>> {
+	virtual auto edge_point1() const -> std::pair<PPoint2D, PPoint2D> {
 		return {{0, 0}, {0, 0}};
 	}
 
-	virtual auto edge_point2() const -> std::pair<std::array<float, 2>, std::array<float, 2>> {
+	virtual auto edge_point2() const -> std::pair<PPoint2D, PPoint2D> {
 		return {{0, 0}, {0, 0}};
 	}
 
-    virtual auto mtv() const -> std::array<float, 2> { return {{0, 0}}; }
+    virtual auto mtv() const -> PPoint2D { return {0, 0}; }
 };
 
 struct PBoxColider : public PColider {
@@ -79,16 +80,12 @@ struct PCircleColider : public PColider {
 	}
 };
 
-using PVertices2D = std::array<std::array<float, 2>, 4>;
-using PPoint2D = std::array<float, 2>;
+using PVertices2D = std::array<PPoint2D, 4>;
 
-constexpr auto operator-(const PPoint2D &p1, const PPoint2D &p2) -> PPoint2D {
-	return {{p1[0] - p2[0], p1[1] - p2[1]}};
-}
 
 constexpr auto dot(const PPoint2D &p1, const PPoint2D &p2) -> float { return p1[0] * p2[0] + p1[1] * p2[1]; }
 
-constexpr auto perpendicular(const PPoint2D &p) -> PPoint2D { return {{-p[1], p[0]}}; }
+constexpr auto perpendicular(const PPoint2D &p) -> PPoint2D { return {-p[1], p[0]}; }
 
 struct PSatColider : PColider {
 	void prin_point_2d(const PPoint2D &p) const { std::cout << "(" << p[0] << "," << p[1] << ")"; }
@@ -106,7 +103,8 @@ struct PSatColider : PColider {
 			PPoint2D point1 = shape1[i];
 			PPoint2D point2 = shape1[(i + 1) % shape1.size()];
 			PPoint2D edge = point2 - point1;
-			PPoint2D axis = normalize(perpendicular(edge));
+			PPoint2D axis = perpendicular(edge);
+            axis.normalize();
 			float overlap = overlapAmount(axis, shape1, shape2);
 			if (overlap < 0) {
 				return false;
@@ -123,7 +121,8 @@ struct PSatColider : PColider {
 			PPoint2D point1 = shape2[i];
 			PPoint2D point2 = shape2[(i + 1) % shape2.size()];
 			PPoint2D edge = point2 - point1;
-			PPoint2D axis = normalize(perpendicular(edge));
+			PPoint2D axis = perpendicular(edge);
+            axis.normalize();
 			float overlap = overlapAmount(axis, shape1, shape2);
 			if (overlap < 0) {
 				return false;
@@ -166,27 +165,27 @@ struct PSatColider : PColider {
 		return std::min(max1, max2) - std::max(min1, min2);
 	}
 
-	auto normals() const -> std::array<float, 2> override { return _collision_normal; }
-	auto normals2() const -> std::array<float, 2> override { return _collision_normal2; }
+	auto normals() const -> PPoint2D override { return _collision_normal; }
+	auto normals2() const -> PPoint2D override { return _collision_normal2; }
 
-	auto edge_point1() const -> std::pair<std::array<float, 2>, std::array<float, 2>> override {
+	auto edge_point1() const -> std::pair<PPoint2D, PPoint2D> override {
 		return {_edge_point1, _edge_point2};
 	}
 
-	auto edge_point2() const -> std::pair<std::array<float, 2>, std::array<float, 2>> override {
+	auto edge_point2() const -> std::pair<PPoint2D, PPoint2D> override {
 		return {_edge_point3, _edge_point4};
 	}
 
-    auto mtv() const -> std::array<float, 2> override { return _mtv; }
+    auto mtv() const -> PPoint2D override { return _mtv; }
 
    private:
-	mutable std::array<float, 2> _collision_normal = {{0.0f, 0.0f}};
-	mutable std::array<float, 2> _collision_normal2 = {{0.0f, 0.0f}};
-	mutable PPoint2D _edge_point1 = {{0.0f, 0.0f}};
-	mutable PPoint2D _edge_point2 = {{0.0f, 0.0f}};
-	mutable PPoint2D _edge_point3 = {{0.0f, 0.0f}};
-	mutable PPoint2D _edge_point4 = {{0.0f, 0.0f}};
-    mutable PPoint2D _mtv = {{0.0f, 0.0f}};
+	mutable PPoint2D _collision_normal = {0.0f, 0.0f};
+	mutable PPoint2D _collision_normal2 = {0.0f, 0.0f};
+	mutable PPoint2D _edge_point1 = {0.0f, 0.0f};
+	mutable PPoint2D _edge_point2 = {0.0f, 0.0f};
+	mutable PPoint2D _edge_point3 = {0.0f, 0.0f};
+	mutable PPoint2D _edge_point4 = {0.0f, 0.0f};
+    mutable PPoint2D _mtv = {0.0f, 0.0f};
 };
 
 #endif
