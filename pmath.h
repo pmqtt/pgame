@@ -84,7 +84,7 @@ public:
 
         ConstIterator(float value) : _value(value) {}
 
-        const float operator*() const { return _value; }
+        float operator*() const { return _value; }
 
         ConstIterator& operator++() {
             _value += 0.001;
