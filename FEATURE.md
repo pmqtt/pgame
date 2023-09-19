@@ -7,3 +7,4 @@
 * peventloop->stop() rename to quit
 * peventloop->stop() stop the engine
 * peventloop->resume() start the engine after it was stopped
+* Add intervall class
