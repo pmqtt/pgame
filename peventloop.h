@@ -53,7 +53,7 @@ class PEventLoop {
 
 	auto animation_timer() -> PTimer& { return _animation_timer; }
 
-	auto delta_time() -> double { return _delta_time; }
+	auto delta_time()const -> double { return _delta_time; }
 
 	void run();
 
