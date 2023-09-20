@@ -46,6 +46,7 @@ class PEngine {
 		std::vector<PTimeToInpact> collisions;
 		PTimeToInpact last_collision;
 		_collison_names.clear();
+        std::size_t max_iteartions = 100 + elements_count * elements_count;
 		do {
 			collisions.clear();
 			for (auto& iter : _physic_objects) {
@@ -70,7 +71,7 @@ class PEngine {
 				last_collision = collisions[i];
 				_collison_names.insert(collisions[i].name);
 			}
-		} while (collisions.size() > 0);
+		} while (collisions.size() > 0 || max_iteartions-- > 0);
 	}
 
    private:
