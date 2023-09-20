@@ -7,6 +7,7 @@
 #include <string>
 #include <tuple>
 #include <vector>
+#include <set>
 
 #include "pphysic.h"
 
@@ -67,14 +68,14 @@ class PEngine {
 				collisions[i].object1->colide(collisions[i].object2, delta_time);
 				collisions[i].object1->move(delta_time);
 				last_collision = collisions[i];
-				_collison_names.push_back(collisions[i].name);
+				_collison_names.insert(collisions[i].name);
 			}
 		} while (collisions.size() > 0);
 	}
 
    private:
 	std::map<std::string, std::shared_ptr<PPhysicObject>> _physic_objects;
-	std::vector<std::string> _collison_names;
+	std::set<std::string> _collison_names;
 };
 
 #endif	// PENGINE_H
