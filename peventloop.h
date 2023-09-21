@@ -13,6 +13,7 @@
 #include "pprimitive.h"
 #include "ptimer.h"
 
+class PButton;
 class PEventLoop;
 
 struct PEventListener {
@@ -50,6 +51,10 @@ class PEventLoop {
 		_animations[name] = animation;
 	}
 
+    void add_button(const std::string& name, std::shared_ptr<PButton> button) {
+        _gui_elements[name] = button;
+    }
+
 	auto animation_timer() -> PTimer& { return _animation_timer; }
 
 	auto delta_time() const -> double { return _delta_time; }
@@ -68,7 +73,7 @@ class PEventLoop {
 	std::shared_ptr<SDL_Renderer> _renderer;
 	std::map<std::string, std::shared_ptr<PDrawable>> _moveables;
 	std::map<std::string, std::shared_ptr<PAnimation>> _animations;
-	// std::map<std::string, std::shared_ptr<PPhysicObject>> _physic_objects;
+    std::map<std::string, std::shared_ptr<PButton>> _gui_elements;
 	PEngine _engine;
 	PTimer _animation_timer;
 	double _delta_time;

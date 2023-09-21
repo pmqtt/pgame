@@ -1,5 +1,5 @@
 #include "peventloop.h"
-
+#include "pbutton.h"
 void PEventLoop::run() {
 	SDL_Event event;
 	_quit = false;
@@ -18,6 +18,15 @@ void PEventLoop::run() {
 						listener->on_event(this, event);
 					}
 					break;
+                case SDL_MOUSEBUTTONDOWN:
+                    for (auto& gui_element : _gui_elements) {
+                        int x, y;
+                        SDL_GetMouseState(&x, &y);
+                        if (gui_element.second->is_clicked(x, y)) {
+                            gui_element.second->on_click();
+                        }
+                    }
+                    break;
 				default:
 					break;
 			}
@@ -37,6 +46,9 @@ void PEventLoop::run() {
 		for (auto& animation : _animations) {
 			animation.second->draw(this, _renderer);
 		}
+        for (auto& gui_element : _gui_elements) {
+            gui_element.second->draw(_renderer);
+        }
 
 		_engine.handle_collision(_delta_time);
 
