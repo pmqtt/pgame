@@ -12,6 +12,7 @@
 #include "pengine.h"
 #include "pprimitive.h"
 #include "ptimer.h"
+#include "pguielement.h"
 
 class PButton;
 class PEventLoop;
@@ -51,7 +52,7 @@ class PEventLoop {
 		_animations[name] = animation;
 	}
 
-    void add_button(const std::string& name, std::shared_ptr<PButton> button) {
+    void add_gui_element(const std::string& name, std::shared_ptr<PGuiElement> button) {
         _gui_elements[name] = button;
     }
 
@@ -73,7 +74,7 @@ class PEventLoop {
 	std::shared_ptr<SDL_Renderer> _renderer;
 	std::map<std::string, std::shared_ptr<PDrawable>> _moveables;
 	std::map<std::string, std::shared_ptr<PAnimation>> _animations;
-    std::map<std::string, std::shared_ptr<PButton>> _gui_elements;
+    std::map<std::string, std::shared_ptr<PGuiElement>> _gui_elements;
 	PEngine _engine;
 	PTimer _animation_timer;
 	double _delta_time;

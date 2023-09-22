@@ -3,6 +3,7 @@
 #include "../pdebug.h"
 #include "../pgame.h"
 #include "../pbutton.h"
+#include "../pstacklayout.h"
 
 struct PressEscape : public PKeyDownListener {
 	void on_event(PEventLoop* loop, SDL_Event event) override {
@@ -56,7 +57,22 @@ auto main(int argc, char** argv) -> int {
 	loop.add_key_down_listener(std::make_shared<PressUp>());
 	loop.add_key_down_listener(std::make_shared<PressDown>());
 
-    loop.add_button("hello_button", std::make_shared<PButton>(50,50,100,20));
+
+    auto stacklayout = std::make_shared<PStackLayout>(PStackLayoutDirection::VERTICAL,10,10);
+    auto button1 = std::make_shared<PButton>(0,10,100,20);
+    auto button2 = std::make_shared<PButton>(0,0,100,20);
+    auto button3 = std::make_shared<PButton>(0,0,100,20);
+    auto button4 = std::make_shared<PButton>(0,0,100,20);
+
+    stacklayout->add(button1);
+    stacklayout->add(button2);
+    stacklayout->add(button3);
+    stacklayout->add(button4);
+    stacklayout->spacing(10);
+
+    loop.add_gui_element("stacklayout", stacklayout);
+
+
 
 	loop.run();
 	return 0;

@@ -18,7 +18,7 @@ struct PDrawable {
 		: _color({255, 0, 0, 255}), _x(x), _y(y), _fill(fill), _strategy(strategy), _changed(true), _angle(0) {}
 
 	PDrawable(const PDrawable& a) {
-		_color = a._color;
+        _color = a._color;
 		_x = a._x;
 		_y = a._y;
 		_fill = a._fill;
@@ -26,6 +26,7 @@ struct PDrawable {
 		_changed = a._changed;
 		_angle = a._angle;
 	}
+
 
 	void draw(std::shared_ptr<SDL_Renderer> renderer) {
 		SDL_SetRenderDrawColor(renderer.get(), _color[0], _color[1], _color[2], _color[3]);
@@ -92,16 +93,33 @@ struct PRect : public PDrawable {
    public:
 	PRect(float x, float y, float w, float h, bool fill = false,
 		  std::shared_ptr<PDrawStrategy> strategy = std::make_shared<PDrawCartesianStrategy>())
-		: PDrawable(x + w / 2, y + h / 2, fill, strategy), w(w), h(h) {}
+		: PDrawable(x + w / 2, y + h / 2, fill, strategy), w(w), h(h) {
+        }
 
-	PRect(const PRect& a) : PDrawable(a) {
-		w = a.w;
+	PRect(const PRect& a) 
+        : PDrawable(a.bounding_box()[0][0] +a.w/2,
+                    a.bounding_box()[0][1] +a.h/2,
+                    a.fill(),
+                    a._strategy) {
+        w = a.w;
 		h = a.h;
 	}
 
+    auto operator=(const PRect & rhs)-> PRect & {
+        this->w = rhs.w;
+        this->h = rhs.h;
+        this->_x = rhs._x;
+        this->_y = rhs._y;
+        this->_fill = rhs._fill;
+        this->_strategy = rhs._strategy;
+        this->_changed = rhs._changed;
+        this->_angle = rhs._angle;
+        return *this;
+    }
+
 	void draw_fill(std::shared_ptr<SDL_Renderer> renderer) override {
 		for (float y = _y - h / 2; y < _y + h / 2; y += 1) {
-			for (float x = _x - x / 2; x < _x + w / 2; x += 1) {
+			for (float x = _x - w / 2; x < _x + w / 2; x += 1) {
 				const auto point = rotate_point(_x, _y, x, y, degree_to_radian(_angle));
 				draw_point(renderer, point[0], point[1]);
 			}

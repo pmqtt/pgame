@@ -27,6 +27,17 @@ void PEventLoop::run() {
                         }
                     }
                     break;
+                case SDL_MOUSEMOTION:
+                    for (auto& gui_element : _gui_elements) {
+                        int x, y;
+                        SDL_GetMouseState(&x, &y);
+                        if (gui_element.second->is_clicked(x, y)) {
+                            gui_element.second->hover(true);
+                        }else{
+                            gui_element.second->hover(false);
+                        }
+                    }
+                    break;
 				default:
 					break;
 			}

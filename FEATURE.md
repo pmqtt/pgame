@@ -8,3 +8,6 @@
 * peventloop->stop() stop the engine
 * peventloop->resume() start the engine after it was stopped
 * Add intervall class
+* Add PGUIElement
+* Add PButton to support Buttons
+* Add PStackLayout to support simple layout algorithm

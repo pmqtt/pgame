@@ -1,0 +1,20 @@
+#ifndef PGUIELEMENT_H
+#define PGUIELEMENT_H
+#include <SDL2/SDL.h>
+#include <memory>
+
+#include "pstyle.h"
+
+class PGuiElement{
+public:
+    PGuiElement() = default;
+    virtual ~PGuiElement() = default;
+    virtual void draw(std::shared_ptr<SDL_Renderer> renderer) = 0;
+    virtual auto is_clicked(int mouseX,int mouseY)const -> bool = 0;
+    virtual void on_click() = 0;
+    virtual void hover(bool hover) = 0;
+    virtual void style(const PStyle & style) = 0;
+    virtual auto style()const -> PStyle = 0;
+};
+
+#endif // PGUIELEMENT_H
