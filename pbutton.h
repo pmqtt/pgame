@@ -28,6 +28,7 @@ public:
         _style.font_color = {{64,64,64,255}};
         _style.text = "Button";
         _style.hover_color = {{128,128,255,255}};
+        _style.fixed_content = true;
         apply_style();
     }
 

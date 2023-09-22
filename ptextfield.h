@@ -20,6 +20,7 @@ public:
         _style.font_size = 12;
         _style.font_color = {{64,64,64,255}};
         _style.text = " ";
+        _style.fixed_content = false;
         _last_blink_time = std::chrono::steady_clock::now();
     }
 

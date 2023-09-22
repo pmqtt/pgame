@@ -15,6 +15,7 @@ struct PStyle{
     std::optional<std::string> text;
     std::optional<std::array<unsigned char, 4>> hover_color;
     std::optional<int> spacing;
+    std::optional<bool> fixed_content;
 };
 
 #endif
