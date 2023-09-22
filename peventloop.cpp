@@ -38,6 +38,21 @@ void PEventLoop::run() {
                         }
                     }
                     break;
+                case SDL_TEXTINPUT:{
+                    std::string s = event.text.text;
+                    for( auto & gui_element : _gui_elements){
+                        int x, y;
+                        SDL_GetMouseState(&x, &y);
+                        if(gui_element.second->is_clicked(x,y)){
+                            PStyle style = gui_element.second->element()->style();
+                            if(!gui_element.second->element()->fixed_content()){   
+                                *style.text += s;
+                                gui_element.second->element()->style(style);
+                            }
+                        }
+                    }
+                }
+                    break;
 				default:
 					break;
 			}

@@ -1,6 +1,7 @@
 #ifndef PSTACKLAYOUT_H
 #define PSTACKLAYOUT_H
 #include "pguielement.h"
+#include "pdebug.h"
 #include <vector>
 enum class PStackLayoutDirection {
     HORIZONTAL,
@@ -65,6 +66,21 @@ public:
     void spacing(int spacing){
         _style.spacing = spacing;
         update_layout();
+    }
+
+    void listener(std::function<void()> listener) override{
+        P_UNUSED(listener);
+    }
+    
+    auto element() -> std::shared_ptr<PGuiElement> override{
+        if(_last_index != -1){
+            return _elements[_last_index]->element();
+        }
+        return std::shared_ptr<PGuiElement>(this);
+    }
+
+    auto fixed_content()const -> bool override{
+        return true;
     }
 
 private:

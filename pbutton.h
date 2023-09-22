@@ -8,7 +8,9 @@
 #include "pstyle.h"
 #include "pguielement.h"
 
-class PButton : public PGuiElement{ 
+#include <memory>
+
+class PButton : public PGuiElement, public std::enable_shared_from_this<PButton>{
 public:
     PButton() : _rect(0,0,0,0,true){
         std::cout<<"Constructor PButton 1"<<std::endl;
@@ -30,11 +32,6 @@ public:
     }
 
     PButton(const PStyle & style) : _style(style),_rect(0,0,0,0,true){
-        apply_style();
-    }
-
-    PButton(const PButton & other) : _style(other._style),_rect(other._rect){
-        std::cout<<"Constructor PButton 3"<<std::endl;
         apply_style();
     }
 
@@ -71,12 +68,15 @@ public:
     }
 
     void on_click() override{
-        std::cout << "Button clicked" << std::endl;
+        if(_listeners){
+            _listeners();
+        }
     }
 
     void hover(bool flag) override{
         _mouse_over = flag;
     }
+
     auto style()const -> PStyle override{
         return _style;
     }
@@ -84,6 +84,18 @@ public:
     void style(const PStyle & style) override{
         _style = style;
         apply_style();
+    }
+
+    void listener(std::function<void()> listener) override{
+        _listeners = listener;
+    }
+    
+    auto element() -> std::shared_ptr<PGuiElement> override{
+        return shared_from_this();
+    }
+
+    auto fixed_content()const -> bool override{
+        return true;
     }
 
 private:
@@ -98,6 +110,7 @@ private:
     PRect _rect;
     std::shared_ptr<PFont> _font;
     bool _mouse_over = false;
+    std::function<void()> _listeners;
     
 };
 
