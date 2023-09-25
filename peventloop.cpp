@@ -17,6 +17,21 @@ void PEventLoop::run() {
 					for (auto listener : _key_down_listeners) {
 						listener->on_event(this, event);
 					}
+                    if(event.key.keysym.sym == SDLK_BACKSPACE){
+                        for( auto & gui_element : _gui_elements){
+                            int x, y;
+                            SDL_GetMouseState(&x, &y);
+                            if(gui_element.second->is_clicked(x,y)){
+                                PStyle style = gui_element.second->element()->style();
+                                if(!gui_element.second->element()->fixed_content()){   
+                                    if(style.text->size() > 0){
+                                        style.text->pop_back();
+                                        gui_element.second->element()->style(style);
+                                    }
+                                }
+                            }
+                        }
+                    }
 					break;
                 case SDL_MOUSEBUTTONDOWN:
                     for (auto& gui_element : _gui_elements) {

@@ -8,7 +8,8 @@
 
 struct PressEscape : public PKeyDownListener {
 	void on_event(PEventLoop* loop, SDL_Event event) override {
-		if (event.key.keysym.sym == SDLK_ESCAPE) {
+		P_UNUSED(loop);
+        if (event.key.keysym.sym == SDLK_ESCAPE) {
 			loop->quit();
 		}
 	}
@@ -16,32 +17,32 @@ struct PressEscape : public PKeyDownListener {
 
 struct PressRight : public PKeyDownListener {
 	void on_event(PEventLoop* loop, SDL_Event event) override {
+		P_UNUSED(loop);
 		if (event.key.keysym.sym == SDLK_RIGHT) {
-			loop->moveables()["player1"]->add(std::array<float, 2>{1, 0});
 		}
 	}
 };
 
 struct PressLeft : public PKeyDownListener {
 	void on_event(PEventLoop* loop, SDL_Event event) override {
+		P_UNUSED(loop);
 		if (event.key.keysym.sym == SDLK_LEFT) {
-			loop->moveables()["player1"]->add(std::array<float, 2>{-1, 0});
 		}
 	}
 };
 
 struct PressUp : public PKeyDownListener {
 	void on_event(PEventLoop* loop, SDL_Event event) override {
+		P_UNUSED(loop);
 		if (event.key.keysym.sym == SDLK_UP) {
-			loop->moveables()["player1"]->add(std::array<float, 2>{0, -1});
 		}
 	}
 };
 
 struct PressDown : public PKeyDownListener {
 	void on_event(PEventLoop* loop, SDL_Event event) override {
+		P_UNUSED(loop);
 		if (event.key.keysym.sym == SDLK_DOWN) {
-			loop->moveables()["player1"]->add(std::array<float, 2>{0, 1});
 		}
 	}
 };
