@@ -80,3 +80,5 @@ test/bin/
 *.la
 .DS_Store
 Makefile
+.vscode/settings.json
+log.txt
