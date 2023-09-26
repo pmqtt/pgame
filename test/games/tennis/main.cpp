@@ -34,6 +34,9 @@ struct PressBottom : public PKeyDownListener {
 
 struct BallWallCollisionListener : public PCollisionListener{
     void on_event(PEventLoop* loop,const PCollisionItem & item, std::shared_ptr<PPhysicObject> object1, std::shared_ptr<PPhysicObject> object2) override {
+        P_UNUSED(loop);
+        P_UNUSED(object1);
+        P_UNUSED(object2);
         PCollisionItem ball_left = { "ball", "field_left" };
         PCollisionItem ball_right = { "ball", "field_right" };
         if (item == ball_left) {
@@ -46,7 +49,6 @@ struct BallWallCollisionListener : public PCollisionListener{
         }
     }
 };
-
 
 auto create_ball(float x, float y) -> std::shared_ptr<PPhysicObject> {
     auto drawable = std::make_shared<PRect>(x, y, 10, 10, true);
@@ -108,7 +110,6 @@ auto main(int argc, char** argv) -> int {
 	event_loop.add_physics_object("computer_player", create_player(WIDTH-50, HEIGHT/2-50));
     event_loop.add_physics_object("ball", create_ball(WIDTH/2-50, HEIGHT/2));
     create_field(event_loop);
-
     event_loop.run();
 	return 0;
 }
