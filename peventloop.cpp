@@ -95,7 +95,7 @@ void PEventLoop::run() {
 
 		SDL_RenderPresent(_renderer.get());
 
-		int delay = (1000.0f / 60.0f) - (_delta_time / 1000.0f);
+		int delay = (1000.0f / 60.0f) - (_delta_time * 1000.0f);
 		if (delay > 0) {
 			SDL_Delay(delay);
 		}

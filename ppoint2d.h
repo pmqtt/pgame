@@ -69,6 +69,8 @@ class PPoint2D {
 
 	constexpr auto length() const -> float { return std::sqrt(_point[0] * _point[0] + _point[1] * _point[1]); }
 
+    constexpr auto quad_length()const -> float { return _point[0] * _point[0] + _point[1] * _point[1]; }
+
 	constexpr auto normalize() -> PPoint2D& {
 		float l = length();
 		_point[0] /= l;

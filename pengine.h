@@ -8,6 +8,7 @@
 #include <tuple>
 #include <vector>
 #include <set>
+#include <chrono>
 
 #include "pphysic.h"
 
@@ -49,9 +50,10 @@ class PEngine {
         std::size_t max_iteartions = 100 + elements_count * elements_count;
 		do {
 			collisions.clear();
+            //measure execution time
 			for (auto& iter : _physic_objects) {
 				for (auto& sIter : _physic_objects) {
-					if (iter.first != sIter.first) {
+					if (iter.first != sIter.first && (iter.second->velocity().quad_length() > 0.0 || sIter.second->velocity().quad_length() > 0.0 )) {
 						float t = iter.second->compute_toi(sIter.second, delta_time);
 						if (t >= 0.0 && last_collision.object1 != iter.second &&
 							last_collision.object2 != sIter.second) {
@@ -64,9 +66,12 @@ class PEngine {
 					}
 				}
 			}
+            if(collisions.size() == 0) {
+                return;
+            }
 			std::sort(collisions.begin(), collisions.end(), [](auto& a, auto& b) { return a.time < b.time; });
-			for (std::size_t i = 0; i < collisions.size(); ++i) {
-				collisions[i].object1->colide(collisions[i].object2, delta_time);
+            for (std::size_t i = 0; i < collisions.size(); ++i) {
+				collisions[i].object1->colide(collisions[i].object2, delta_time, collisions[i].time);
 				collisions[i].object1->move(delta_time);
 				last_collision = collisions[i];
 				_collison_names.insert(collisions[i].name);

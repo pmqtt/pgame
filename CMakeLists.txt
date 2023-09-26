@@ -29,6 +29,18 @@ function(add_core_test TEST_NAME)
           COMMAND ${CMAKE_COMMAND} -E remove $<TARGET_FILE:${TEST_NAME}>)
 endfunction()
 
+
+function(add_game_test NAME)
+    add_executable(${NAME} test/games/${NAME}/main.cpp)
+    target_link_libraries(${NAME} SDL2main SDL2 SDL2_ttf pgame)
+  
+    add_custom_command(TARGET ${NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${NAME}> ${CMAKE_CURRENT_BINARY_DIR}/test/games/${NAME})
+    # Remove test executable from build directory
+    add_custom_command(TARGET ${NAME} POST_BUILD
+          COMMAND ${CMAKE_COMMAND} -E remove $<TARGET_FILE:${NAME}>)
+endfunction()
+
 add_core_test(core_test_0001)
 add_core_test(core_test_0002)
 add_core_test(core_test_0003)
@@ -38,4 +50,9 @@ add_core_test(core_test_0006)
 add_core_test(core_test_0007)
 add_core_test(core_test_0008)
 
+# GUI TESTS
 add_core_test(gui_test_0001)
+
+# GAME TESTS
+
+add_game_test(tennis)
