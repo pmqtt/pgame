@@ -25,6 +25,10 @@ struct PKeyDownListener {
 	virtual void on_event(PEventLoop* loop, SDL_Event event) = 0;
 };
 
+struct PCollisionListener{
+    virtual void on_event(PEventLoop* loop,const PCollisionItem & item, std::shared_ptr<PPhysicObject> object1, std::shared_ptr<PPhysicObject> object2) = 0;
+};
+
 class PEventLoop {
    public:
 	PEventLoop() = default;
@@ -34,6 +38,8 @@ class PEventLoop {
 	void push(SDL_Event event) { _events.push_back(event); }
 
 	void add_key_down_listener(std::shared_ptr<PKeyDownListener> listener) { _key_down_listeners.push_back(listener); }
+
+    void add_collision_listener(const PCollisionItem & item,std::shared_ptr<PCollisionListener> listener) { _collision_listeners[item] = listener; }
 
 	void quit() { _quit = true; }
 
@@ -75,6 +81,7 @@ class PEventLoop {
 	std::map<std::string, std::shared_ptr<PDrawable>> _moveables;
 	std::map<std::string, std::shared_ptr<PAnimation>> _animations;
     std::map<std::string, std::shared_ptr<PGuiElement>> _gui_elements;
+    std::unordered_map<PCollisionItem, std::shared_ptr<PCollisionListener> > _collision_listeners;
 	PEngine _engine;
 	PTimer _animation_timer;
 	double _delta_time;

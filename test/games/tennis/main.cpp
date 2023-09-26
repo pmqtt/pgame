@@ -32,6 +32,21 @@ struct PressBottom : public PKeyDownListener {
     }
 };
 
+struct BallWallCollisionListener : public PCollisionListener{
+    void on_event(PEventLoop* loop,const PCollisionItem & item, std::shared_ptr<PPhysicObject> object1, std::shared_ptr<PPhysicObject> object2) override {
+        PCollisionItem ball_left = { "ball", "field_left" };
+        PCollisionItem ball_right = { "ball", "field_right" };
+        if (item == ball_left) {
+            std::cout<<"YOU LOOSE"<<std::endl;
+            exit(0);
+        }
+        if (item == ball_right) {
+            std::cout<<"YOU WIN"<<std::endl;
+            exit(0);
+        }
+    }
+};
+
 
 auto create_ball(float x, float y) -> std::shared_ptr<PPhysicObject> {
     auto drawable = std::make_shared<PRect>(x, y, 10, 10, true);
@@ -71,7 +86,7 @@ void create_field(PEventLoop& loop) {
 
     loop.add_physics_object("field_top", top_object);
     loop.add_physics_object("field_left", left_object);
-    loop.add_physics_object("fiel_right", right_object);
+    loop.add_physics_object("field_right", right_object);
     loop.add_physics_object("field_bottom", bottom_object);
 
     auto middle_line = std::make_shared<PRect>(WIDTH/2-5, 10, 10, HEIGHT-20, true);
@@ -84,7 +99,9 @@ auto main(int argc, char** argv) -> int {
 	P_UNUSED(argv);
 	PWindow window("PGame", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT);
 	auto event_loop = window.create_event_loop();
-	event_loop.add_key_down_listener(std::make_shared<PressEscape>());
+    event_loop.add_collision_listener({"field_left","ball"},std::make_shared<BallWallCollisionListener>());
+    event_loop.add_collision_listener({"field_right","ball"},std::make_shared<BallWallCollisionListener>());
+    event_loop.add_key_down_listener(std::make_shared<PressEscape>());
 	event_loop.add_key_down_listener(std::make_shared<PressTop>());
 	event_loop.add_key_down_listener(std::make_shared<PressBottom>());
 	event_loop.add_physics_object("human_player", create_player(40, HEIGHT/2-50));

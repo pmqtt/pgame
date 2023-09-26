@@ -71,10 +71,22 @@ void PEventLoop::run() {
 				default:
 					break;
 			}
+
 		}
 		if (_stopped) {
 			continue;
 		}
+        for(auto & collision: _engine.collisions()){
+           if(_collision_listeners.find(collision) != _collision_listeners.end()){
+                _collision_listeners[collision]->on_event(this, 
+                                                      collision, 
+                                                      _engine.objects()[collision.name1], 
+                                                      _engine.objects()[collision.name2]);
+           }else{
+                std::cout << "No listener for collision: " << collision <<std::endl;
+           }
+        }
+
 		SDL_SetRenderDrawColor(_renderer.get(), 0, 0, 0, 255);
 		SDL_RenderClear(_renderer.get());
 
