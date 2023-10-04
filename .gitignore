@@ -67,6 +67,7 @@ compile_commands.json
 CTestTestfile.cmake
 CTestTestfile.cmake.in
 *.cmake
+build.ninja
 
 # Test binaries
 test/bin/
@@ -82,3 +83,5 @@ test/bin/
 Makefile
 .vscode/settings.json
 log.txt
+
+build/
