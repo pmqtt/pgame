@@ -12,7 +12,7 @@
 #include "pengine.h"
 #include "pprimitive.h"
 #include "ptimer.h"
-#include "pguielement.h"
+#include "../guielements/pguielement.h"
 
 class PButton;
 class PEventLoop;

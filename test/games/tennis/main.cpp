@@ -1,5 +1,5 @@
-#include "../../../pcolider.h"
-#include "../../../pgame.h"
+#include "../../../physic/pcollider.h"
+#include "../../../core/pgame.h"
 
 #define WIDTH 1200
 #define HEIGHT 600
@@ -52,7 +52,7 @@ struct BallWallCollisionListener : public PCollisionListener{
 
 auto create_ball(float x, float y) -> std::shared_ptr<PPhysicObject> {
     auto drawable = std::make_shared<PRect>(x, y, 10, 10, true);
-    auto object = std::make_shared<PPhysicObject>(drawable, std::make_shared<PSatColider>());
+    auto object = std::make_shared<PPhysicObject>(drawable, std::make_shared<PSatCollider>());
     object->velocity(-80.0, 15.0);
     object->gravity(0.0);
     object->acceleration(0.0);
@@ -62,7 +62,7 @@ auto create_ball(float x, float y) -> std::shared_ptr<PPhysicObject> {
 
 auto create_player(float x, float y) -> std::shared_ptr<PPhysicObject> {
     auto drawable = std::make_shared<PRect>(x,y, 10, 50, true);
-    auto object = std::make_shared<PPhysicObject>(drawable, std::make_shared<PSatColider>());
+    auto object = std::make_shared<PPhysicObject>(drawable, std::make_shared<PSatCollider>());
     object->velocity(0.0, 0.0);
     object->gravity(0.0);
     object->acceleration(0.0);
@@ -76,10 +76,10 @@ void create_field(PEventLoop& loop) {
     auto right = std::make_shared<PRect>(WIDTH-20, 10, 10, HEIGHT-20, true);
     auto bottom = std::make_shared<PRect>(10, HEIGHT-20, WIDTH-20, 10, true);
 
-    auto top_object = std::make_shared<PPhysicObject>(top, std::make_shared<PSatColider>());
-    auto left_object = std::make_shared<PPhysicObject>(left, std::make_shared<PSatColider>());
-    auto right_object = std::make_shared<PPhysicObject>(right, std::make_shared<PSatColider>());
-    auto bottom_object = std::make_shared<PPhysicObject>(bottom, std::make_shared<PSatColider>());
+    auto top_object = std::make_shared<PPhysicObject>(top, std::make_shared<PSatCollider>());
+    auto left_object = std::make_shared<PPhysicObject>(left, std::make_shared<PSatCollider>());
+    auto right_object = std::make_shared<PPhysicObject>(right, std::make_shared<PSatCollider>());
+    auto bottom_object = std::make_shared<PPhysicObject>(bottom, std::make_shared<PSatCollider>());
 
     top_object->velocity(0.0, 0.0);
     left_object->velocity(0.0, 0.0);

@@ -1,7 +1,7 @@
 #ifndef PSTACKLAYOUT_H
 #define PSTACKLAYOUT_H
+#include "../core/pdebug.h"
 #include "pguielement.h"
-#include "pdebug.h"
 #include <vector>
 enum class PStackLayoutDirection {
     HORIZONTAL,

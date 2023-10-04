@@ -3,9 +3,9 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
-#include "pprimitive.h"
-#include "pfont.h"
-#include "pstyle.h"
+#include "../core/pprimitive.h"
+#include "../core/pfont.h"
+#include "../core/pstyle.h"
 #include "pguielement.h"
 
 #include <memory>

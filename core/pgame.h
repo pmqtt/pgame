@@ -14,7 +14,7 @@
 #include "panimation.h"
 #include "peventloop.h"
 #include "ppath.h"
-#include "pphysic.h"
+#include "../physic/pphysic.h"
 #include "pprimitive.h"
 #include "ptimer.h"
 #include "pwindow.h"

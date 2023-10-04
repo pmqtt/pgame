@@ -11,8 +11,8 @@
 #include <chrono>
 #include <algorithm>
 
-#include "pquadtree.h"
-#include "pphysic.h"
+#include "../datastructs/pquadtree.h"
+#include "../physic/pphysic.h"
 
 struct PTimeToInpact {
 	PTimeToInpact(const std::string& name, const std::string & name2, float time, std::shared_ptr<PPhysicObject> object1,
@@ -88,6 +88,7 @@ class PEngine {
 		}
 
 		std::vector<std::pair<std::shared_ptr<PPhysicObject>, std::shared_ptr<PPhysicObject>>> last_collisions;
+		#if 0
 		auto is_in_last_collisions = [&last_collisions](std::shared_ptr<PPhysicObject> object1,
 													   std::shared_ptr<PPhysicObject> object2) {
 			for (auto& iter : last_collisions) {
@@ -97,6 +98,7 @@ class PEngine {
 			}
 			return false;
 		};
+		#endif
 
         std::vector<PTimeToInpact> collisions;
 		PTimeToInpact last_collision;
@@ -124,8 +126,8 @@ class PEngine {
             }
 			std::sort(collisions.begin(), collisions.end(), [](auto& a, auto& b) { return a.time < b.time; });
 			for (std::size_t i = 0; i < collisions.size(); ++i) {
-				collisions[i].object1->colide(collisions[i].object2, delta_time, collisions[i].time);
-				collisions[i].object2->colide(collisions[i].object1, delta_time, collisions[i].time);
+				collisions[i].object1->collide(collisions[i].object2, delta_time, collisions[i].time);
+				collisions[i].object2->collide(collisions[i].object1, delta_time, collisions[i].time);
 				collisions[i].object2->move(delta_time- collisions[i].time * delta_time);
 				collisions[i].object1->move(delta_time- collisions[i].time * delta_time);
 				last_collision = collisions[i];

@@ -1,5 +1,6 @@
 #include "peventloop.h"
-#include "pbutton.h"
+#include "../guielements/pbutton.h"
+
 void PEventLoop::run() {
 	SDL_Event event;
 	_quit = false;

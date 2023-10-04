@@ -8,7 +8,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 add_compile_options(-Wall -Wextra -Wpedantic -g)
 add_compile_options(-fsanitize=address)
 link_libraries(-fsanitize=address)
-add_library(pgame STATIC panimation.cpp peventloop.cpp pwindow.cpp)
+add_library(pgame STATIC core/panimation.cpp 
+                         core/peventloop.cpp 
+                         core/pwindow.cpp
+                         datastructs/phashmap.cpp
+                         physic/pcollider.cpp
+                         physic/pphysic.cpp
+                         )
 
 message(STATUS "SDL2_INCLUDE_DIRS: ${SDL2_INCLUDE_DIRS}")
 message(STATUS "SDL2_LIBRARIES: ${SDL2_LIBRARIES}")

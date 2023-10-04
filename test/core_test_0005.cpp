@@ -1,6 +1,5 @@
-#include "../pcolider.h"
-#include "../pgame.h"
-#include "../pmath.h"
+#include "../core/pgame.h"
+#include "../core/pmath.h"
 
 auto main(int argc, char** argv) -> int {
 	P_UNUSED(argc);

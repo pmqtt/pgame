@@ -1,5 +1,5 @@
-#include "../pcolider.h"
-#include "../pgame.h"
+#include "../physic/pcollider.h"
+#include "../core/pgame.h"
 
 struct PressEscape : public PKeyDownListener {
 	void on_event(PEventLoop* loop, SDL_Event event) override {
@@ -26,7 +26,7 @@ auto main(int argc, char** argv) -> int {
 	event_loop.add_key_down_listener(std::make_shared<PressRight>());
 
 	auto drawable = std::make_shared<PRect>(700, 228, 10, 10);
-	auto object = std::make_shared<PPhysicObject>(drawable, std::make_shared<PSatColider>());
+	auto object = std::make_shared<PPhysicObject>(drawable, std::make_shared<PSatCollider>());
 	object->gravity(0);
 	object->velocity(-30, 0.000);
 	object->restitution(0.8);

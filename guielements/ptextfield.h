@@ -1,10 +1,10 @@
 #ifndef PTEXTFIELD_H
 #define PTEXTFIELD_H
 
+#include "../core/pprimitive.h"
+#include "../core/pfont.h"
+#include "../core/pdebug.h"
 #include "pguielement.h"
-#include "pprimitive.h"
-#include "pfont.h"
-#include "pdebug.h"
 
 #include <chrono>
 #include <memory>

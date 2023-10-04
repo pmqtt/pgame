@@ -4,7 +4,7 @@
 #include <memory>
 #include <functional>
 
-#include "pstyle.h"
+#include "../core/pstyle.h"
 
 class PGuiElement{
 public:

@@ -5,10 +5,10 @@
 #include <thread>
 #include <tuple>
 
-#include "pcolider.h"
-#include "pmath.h"
-#include "pprimitive.h"
-#include "ptimer.h"
+#include "pcollider.h"
+#include "../core/pmath.h"
+#include "../core/pprimitive.h"
+#include "../core/ptimer.h"
 
 class PPhysicObject;
 
@@ -38,18 +38,18 @@ class PPhysicObject {
 		  _restition(1),
 		  _acceleration(0),
 		  _colision(nullptr) {
-		_colide = false;
+		_collide = false;
 	}
 
-	PPhysicObject(std::shared_ptr<PDrawable> drawable, std::shared_ptr<PColider> colider)
+	PPhysicObject(std::shared_ptr<PDrawable> drawable, std::shared_ptr<PCollider> colider)
 		: _drawable(drawable),
 		  _gravity(0.0),
 		  _velocity{0, 0},
 		  _velocity_direction(0),
 		  _restition(1),
-		  _colider(colider),
+		  _collider(colider),
 		  _colision(nullptr) {
-		_colide = false;
+		_collide = false;
 	}
 
 	PPhysicObject(const PPhysicObject& a) {
@@ -60,9 +60,9 @@ class PPhysicObject {
 		_velocity_direction = a._velocity_direction;
 		_restition = a._restition;
 		_acceleration = a._acceleration;
-		_colider = a._colider;
+		_collider = a._collider;
 		_colision = a._colision;
-		_colide = a._colide;
+		_collide = a._collide;
 		_timer = a._timer;
 	}
 
@@ -96,88 +96,20 @@ class PPhysicObject {
 
 	void restitution(float value) { _restition = value; }
 
-	auto collision_detected() const -> bool { return _colide; }
+	auto collision_detected() const -> bool { return _collide; }
 
 	auto reset_collision() -> void {
-		_colide = false;
+		_collide = false;
 		_colision = nullptr;
 	}
 
-	auto colide(std::shared_ptr<PPhysicObject> other, float time, float t) -> bool {
-		if (_colider) {
-			_colide = false;
-			move(t * time);
-			_colide = true;
-			PPoint2D point{_drawable->x(), _drawable->y()};
-			_colision = std::make_shared<PColision>(point, velocity_direction(), other, _colider->normals());
-			return true;
-		}
-		return false;
-	}
+	auto collide(std::shared_ptr<PPhysicObject> other, float time, float t) -> bool ;
 
-	auto are_colliding(std::shared_ptr<PPhysicObject> other, float t, float time) -> bool {
-		std::shared_ptr<PPhysicObject> drawable = std::make_shared<PPhysicObject>(*this);
-		drawable->_colide = false;
-		drawable->move(t * time);
-		if (_colider->colide(drawable->_drawable, other->_drawable)) {
-			return true;
-		}
-		return false;
-	}
+	auto are_colliding(std::shared_ptr<PPhysicObject> other, float t, float time) -> bool ;
 
-	auto compute_toi(std::shared_ptr<PPhysicObject> other, float time) -> float {
-		if (_colider) {
-			float low = 0;
-			float high = 1;	 // Assuming we are checking for TOI within the next frame, which is normalized to [0, 1]
-			bool exist_colision = false;
-			while (high - low > EPSILON) {
-				float mid = (low + high) / 2.0;
-				if (are_colliding(other, mid, time)) {
-					exist_colision = true;
-					high = mid;
-				} else {
-					low = mid;
-				}
-			}
-			if (!exist_colision) {
-				return -1.0;
-			}
-			float res = (low + high) / 2.0;
-			return res;
-		}
-		return -1.0;
-	}
+	auto compute_toi(std::shared_ptr<PPhysicObject> other, float time) -> float ;
 
-	void move(float delta_time) {
-		if (NEAR_ZERO(_velocity[0]) && NEAR_ZERO(_velocity[1])) {
-			return;
-		}
-
-		if (_colide) {
-			auto collision_normal = _colision->normals.normalized();
-			const float dot_product = _velocity[0] * collision_normal[0] + _velocity[1] * collision_normal[1];
-			_velocity[0] -= (1 + _restition) * dot_product * collision_normal[0];
-			_velocity[1] -= (1 + _restition) * dot_product * collision_normal[1];
-		} else {
-			_velocity[1] += _gravity * delta_time;
-			_velocity[0] += _acceleration * delta_time;
-		}
-
-
-		float x = _velocity[0] * delta_time;
-		float y = _velocity[1] * delta_time;
-		
-		if (NEAR_ZERO(_velocity[0])) {
-			x = 0;
-			_velocity[0] = 0;
-		}
-		
-		if (NEAR_ZERO(_velocity[1])) {
-			y = 0;
-			_velocity[1] = 0.00001;
-		}
-		_drawable->add(std::array<float, 2>{x, y});
-	}
+	void move(float delta_time);
 
 	auto drawable() const ->std::shared_ptr<PDrawable> { return _drawable; }
 
@@ -195,8 +127,8 @@ class PPhysicObject {
 	PPoint2D _velocity;
 	float _velocity_direction;
 	float _restition;
-	std::shared_ptr<PColider> _colider;
-	bool _colide;
+	std::shared_ptr<PCollider> _collider;
+	bool _collide;
 	PPoint2D _colide_point;
 	float _acceleration;
 	std::shared_ptr<PPhysicObject> _colide_with;

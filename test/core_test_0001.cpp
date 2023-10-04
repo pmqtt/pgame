@@ -1,7 +1,7 @@
 #include <iostream>
 
-#include "../pdebug.h"
-#include "../pgame.h"
+#include "../core/pdebug.h"
+#include "../core/pgame.h"
 
 struct PressEscape : public PKeyDownListener {
 	void on_event(PEventLoop* loop, SDL_Event event) override {
