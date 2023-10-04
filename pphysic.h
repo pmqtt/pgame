@@ -53,6 +53,7 @@ class PPhysicObject {
 	}
 
 	PPhysicObject(const PPhysicObject& a) {
+		_name = a._name;
 		_drawable = a._drawable->clone();
 		_gravity = a._gravity;
 		_velocity = a._velocity;
@@ -104,12 +105,6 @@ class PPhysicObject {
 
 	auto colide(std::shared_ptr<PPhysicObject> other, float time, float t) -> bool {
 		if (_colider) {
-		/*	float t = compute_toi(other, time);
-			if (t < 0.0) {
-				_colide = false;
-				_colision = nullptr;
-				return false;
-			}*/
 			_colide = false;
 			move(t * time);
 			_colide = true;
@@ -134,15 +129,17 @@ class PPhysicObject {
 		if (_colider) {
 			float low = 0;
 			float high = 1;	 // Assuming we are checking for TOI within the next frame, which is normalized to [0, 1]
+			bool exist_colision = false;
 			while (high - low > EPSILON) {
 				float mid = (low + high) / 2.0;
 				if (are_colliding(other, mid, time)) {
+					exist_colision = true;
 					high = mid;
 				} else {
 					low = mid;
 				}
 			}
-			if (!are_colliding(other, 1.0, time)) {
+			if (!exist_colision) {
 				return -1.0;
 			}
 			float res = (low + high) / 2.0;
@@ -152,16 +149,11 @@ class PPhysicObject {
 	}
 
 	void move(float delta_time) {
-		// WORKAROUND: move the object a little bit more to avoid multiple colision with the same object
-		const float correction_delta_time = 0.00;
-        if (delta_time == 0) {
-			return;
-		}
 		if (NEAR_ZERO(_velocity[0]) && NEAR_ZERO(_velocity[1])) {
 			return;
 		}
+
 		if (_colide) {
-			delta_time += correction_delta_time;
 			auto collision_normal = _colision->normals.normalized();
 			const float dot_product = _velocity[0] * collision_normal[0] + _velocity[1] * collision_normal[1];
 			_velocity[0] -= (1 + _restition) * dot_product * collision_normal[0];
@@ -171,25 +163,33 @@ class PPhysicObject {
 			_velocity[0] += _acceleration * delta_time;
 		}
 
-		if (NEAR_ZERO(_velocity[0])) {
-			_velocity[0] = 0;
-			if (_colide) {
-				delta_time -= correction_delta_time;
-			}
-		}
 
 		float x = _velocity[0] * delta_time;
 		float y = _velocity[1] * delta_time;
-		if (abs(_velocity[1]) < 0.001) {
+		
+		if (NEAR_ZERO(_velocity[0])) {
+			x = 0;
+			_velocity[0] = 0;
+		}
+		
+		if (NEAR_ZERO(_velocity[1])) {
 			y = 0;
 			_velocity[1] = 0.00001;
 		}
 		_drawable->add(std::array<float, 2>{x, y});
 	}
 
-	auto drawable() const { return _drawable; }
+	auto drawable() const ->std::shared_ptr<PDrawable> { return _drawable; }
 
+	auto position() const -> PPoint2D { return {_drawable->x(), _drawable->y()}; }
+
+	auto name() const -> std::string { return _name; }
+
+	void name(const std::string & name){
+		_name = name;
+	}
    private:
+    std::string _name;
 	std::shared_ptr<PDrawable> _drawable;
 	float _gravity;
 	PPoint2D _velocity;

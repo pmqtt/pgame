@@ -54,5 +54,8 @@ add_core_test(core_test_0008)
 add_core_test(gui_test_0001)
 
 # GAME TESTS
-
 add_game_test(tennis)
+
+# DATASTRUCT TEST
+
+add_core_test(datastruct_test_hashmap_0001)

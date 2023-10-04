@@ -82,8 +82,6 @@ void PEventLoop::run() {
                                                       collision, 
                                                       _engine.objects()[collision.name1], 
                                                       _engine.objects()[collision.name2]);
-           }else{
-                std::cout << "No listener for collision: " << collision <<std::endl;
            }
         }
 
