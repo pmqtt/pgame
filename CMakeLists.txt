@@ -8,6 +8,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 add_compile_options(-Wall -Wextra -Wpedantic -g)
 add_compile_options(-fsanitize=address)
 link_libraries(-fsanitize=address)
+
+set(CURRENT_CMAKE_FILE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(ENGINE_PATH "${CURRENT_CMAKE_FILE_DIR}")
+
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/core/pglobals.h.in
+    ${CMAKE_CURRENT_BINARY_DIR}/core/pglobals.h
+)
+
+
 add_library(pgame STATIC core/panimation.cpp 
                          core/peventloop.cpp 
                          core/pwindow.cpp
@@ -18,6 +28,10 @@ add_library(pgame STATIC core/panimation.cpp
 
 message(STATUS "SDL2_INCLUDE_DIRS: ${SDL2_INCLUDE_DIRS}")
 message(STATUS "SDL2_LIBRARIES: ${SDL2_LIBRARIES}")
+
+
+
+
 
 function(add_core_test TEST_NAME)
   add_executable(${TEST_NAME} test/${TEST_NAME}.cpp)

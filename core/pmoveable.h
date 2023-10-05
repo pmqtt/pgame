@@ -21,10 +21,9 @@ class PMoveable{
 
 
         void move(const PPoint2D& v) {
-
+            _drawable->position(_drawable->x() + v.x(), _drawable->y() + v.y());
         }
 
-    private:
         auto inpact_on_way(const PPoint2D &v, std::shared_ptr<PDrawable> other) -> std::optional<PPoint2D> {
             if(_collider){
                 if(_collider->collide(_drawable, other)){

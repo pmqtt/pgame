@@ -6,24 +6,24 @@
 #include "../core/pprimitive.h"
 #include "../core/pfont.h"
 #include "../core/pstyle.h"
+#include "../core/pglobals.h"
 #include "pguielement.h"
 
 #include <memory>
+#include <iostream>
 
 class PButton : public PGuiElement, public std::enable_shared_from_this<PButton>{
 public:
     PButton() : _rect(0,0,0,0,true){
-        std::cout<<"Constructor PButton 1"<<std::endl;
     }
 
     PButton(int x,int y,int w,int h): _rect(x,y,w,h,true){
-        std::cout<<"Constructor PButton 2"<<std::endl;
         _style.x = x;
         _style.y = y;
         _style.width = w;
         _style.height = h;
         _style.color = {{255,255,255,255}};
-        _style.font_path = "/usr/share/fonts/TTF/Hack-Regular.ttf";
+        _style.font_path = ENGINE_PATH+"/fonts/Hack-Regular.ttf";
         _style.font_size = 12;
         _style.font_color = {{64,64,64,255}};
         _style.text = "Button";

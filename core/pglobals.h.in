@@ -1,0 +1,9 @@
+#ifndef PGLOBALS_H
+#define PGLOBALS_H
+#include <string>
+
+const std::string ENGINE_PATH = "@ENGINE_PATH@";
+
+
+
+#endif // PGLOBALS_H

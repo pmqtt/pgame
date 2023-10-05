@@ -13,6 +13,7 @@
 #include "pprimitive.h"
 #include "ptimer.h"
 #include "../guielements/pguielement.h"
+#include "../core/pmoveable.h"
 
 class PButton;
 class PEventLoop;
@@ -53,6 +54,11 @@ class PEventLoop {
 	}
 
 	void add_moveable(const std::string& name, std::shared_ptr<PDrawable> moveable) { _moveables[name] = moveable; }
+
+	void add_collidable_moveable(const std::string & name, std::shared_ptr<PDrawable> moveable){
+		_moveables[name] = moveable;
+		_engine.add_moveable(name, std::make_shared<PMoveable>(moveable, std::make_shared<PSatCollider>()));
+	}
 
 	void add_animation(const std::string& name, std::shared_ptr<PAnimation> animation) {
 		_animations[name] = animation;

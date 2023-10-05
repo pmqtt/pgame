@@ -47,12 +47,18 @@ auto PPhysicObject::collide(std::shared_ptr<PPhysicObject> other, float time, fl
 	}
 
 	void PPhysicObject::move(float delta_time) {
+		if(_name == "human_player"){
+			std::cout<<"name:"<<_name<<": "<< _drawable->x()<<" : "<< _drawable->y()<<std::endl;
+		}
 		if (NEAR_ZERO(_velocity[0]) && NEAR_ZERO(_velocity[1])) {
 			return;
 		}
 
 		if (_collide) {
 			auto collision_normal = _colision->normals.normalized();
+			if(collision_normal[0] != collision_normal[0] || collision_normal[1] != collision_normal[1]){
+				return;
+			}
 			const float dot_product = _velocity[0] * collision_normal[0] + _velocity[1] * collision_normal[1];
 			_velocity[0] -= (1 + _restition) * dot_product * collision_normal[0];
 			_velocity[1] -= (1 + _restition) * dot_product * collision_normal[1];

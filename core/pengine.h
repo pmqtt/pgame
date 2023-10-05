@@ -13,6 +13,7 @@
 
 #include "../datastructs/pquadtree.h"
 #include "../physic/pphysic.h"
+#include "../core/pmoveable.h"
 
 struct PTimeToInpact {
 	PTimeToInpact(const std::string& name, const std::string & name2, float time, std::shared_ptr<PPhysicObject> object1,
@@ -61,6 +62,10 @@ class PEngine {
 		_physic_objects[name] = physic;
 	}
 
+	void add_moveable(const std::string &name, std::shared_ptr<PMoveable> moveable) {
+		_moveable_objects[name] = moveable;
+	}
+
 	auto objects() -> std::map<std::string, std::shared_ptr<PPhysicObject>> {
 		std::map<std::string, std::shared_ptr<PPhysicObject>> result;
 		for (auto& iter : _physic_objects) {
@@ -86,19 +91,6 @@ class PEngine {
 		for (auto& iter : _physic_objects) {
 			quadtree.insert(iter.second);
 		}
-
-		std::vector<std::pair<std::shared_ptr<PPhysicObject>, std::shared_ptr<PPhysicObject>>> last_collisions;
-		#if 0
-		auto is_in_last_collisions = [&last_collisions](std::shared_ptr<PPhysicObject> object1,
-													   std::shared_ptr<PPhysicObject> object2) {
-			for (auto& iter : last_collisions) {
-				if ((iter.first == object1 && iter.second == object2) || (iter.first == object2 && iter.second == object1)) {
-					return true;
-				}
-			}
-			return false;
-		};
-		#endif
 
         std::vector<PTimeToInpact> collisions;
 		PTimeToInpact last_collision;
@@ -142,6 +134,7 @@ class PEngine {
 
    private:
 	std::map<std::string, std::shared_ptr<PPhysicObject>> _physic_objects;
+	std::map<std::string, std::shared_ptr<PMoveable>> _moveable_objects;
 	std::set<std::string> _collison_names;
     std::vector<PCollisionItem> _collisions;
     

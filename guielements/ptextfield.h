@@ -4,6 +4,7 @@
 #include "../core/pprimitive.h"
 #include "../core/pfont.h"
 #include "../core/pdebug.h"
+#include "../core/pglobals.h"
 #include "pguielement.h"
 
 #include <chrono>
@@ -16,7 +17,7 @@ public:
         _style.y = y;
         _style.width = width;
         _style.height = height;
-        _style.font_path = "/usr/share/fonts/TTF/Hack-Regular.ttf";
+        _style.font_path = ENGINE_PATH+"/fonts/Hack-Regular.ttf";
         _style.font_size = 12;
         _style.font_color = {{64,64,64,255}};
         _style.text = " ";

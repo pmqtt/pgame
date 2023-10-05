@@ -68,6 +68,7 @@ CTestTestfile.cmake
 CTestTestfile.cmake.in
 *.cmake
 build.ninja
+core/pglobals.h
 
 # Test binaries
 test/bin/
