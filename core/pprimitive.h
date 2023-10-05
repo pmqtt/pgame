@@ -43,6 +43,7 @@ struct PDrawable {
 		_changed = true;
 	}
 
+
 	virtual void position(float x, float y) {
 		_x = x;
 		_y = y;

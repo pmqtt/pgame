@@ -46,7 +46,7 @@ class PEventLoop {
 
 	auto moveables() const -> std::map<std::string, std::shared_ptr<PDrawable>> { return _moveables; }
 
-	auto physics_objects() -> std::map<std::string, std::shared_ptr<PPhysicObject>> { return _engine.objects(); }
+	auto physics_objects() -> std::map<std::string, std::shared_ptr<PPhysicObject>> { return _engine.all_objects(); }
 
 	void add_physics_object(const std::string& name, std::shared_ptr<PPhysicObject> physic) {
 		_engine.add_physic_object(name, physic);

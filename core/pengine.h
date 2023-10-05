@@ -66,6 +66,10 @@ class PEngine {
 		_moveable_objects[name] = moveable;
 	}
 
+	auto all_objects() -> std::map<std::string, std::shared_ptr<PPhysicObject>> &{
+		return _physic_objects;
+	}
+
 	auto objects() -> std::map<std::string, std::shared_ptr<PPhysicObject>> {
 		std::map<std::string, std::shared_ptr<PPhysicObject>> result;
 		for (auto& iter : _physic_objects) {

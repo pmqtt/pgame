@@ -5,10 +5,13 @@
 #include <thread>
 #include <tuple>
 
+
 #include "pcollider.h"
+#include "pforce.h"
 #include "../core/pmath.h"
 #include "../core/pprimitive.h"
 #include "../core/ptimer.h"
+
 
 class PPhysicObject;
 
@@ -28,7 +31,7 @@ struct PColision {
 	std::string name;
 };
 
-class PPhysicObject {
+class PPhysicObject : public std::enable_shared_from_this<PPhysicObject> {
    public:
 	PPhysicObject(std::shared_ptr<PDrawable> drawable)
 		: _drawable(drawable),
@@ -120,6 +123,18 @@ class PPhysicObject {
 	void name(const std::string & name){
 		_name = name;
 	}
+
+	void add_force(std::shared_ptr<PForce> force) { _forces.push_back(force); }
+
+	 void update(float deltaTime) {
+        for (const auto& force : _forces) {
+            force->apply_to(shared_from_this(), deltaTime);
+        }
+        
+        PPoint2D p = _velocity * deltaTime;
+		_drawable->add({p[0], p[1]});
+    }
+
    private:
     std::string _name;
 	std::shared_ptr<PDrawable> _drawable;
@@ -134,6 +149,7 @@ class PPhysicObject {
 	std::shared_ptr<PPhysicObject> _colide_with;
 	std::shared_ptr<PColision> _colision;
 	PTimer _timer;
+	std::vector<std::shared_ptr<PForce>> _forces;
 };
 
 #endif	// PPHYSIC_H

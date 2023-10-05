@@ -47,9 +47,6 @@ auto PPhysicObject::collide(std::shared_ptr<PPhysicObject> other, float time, fl
 	}
 
 	void PPhysicObject::move(float delta_time) {
-		if(_name == "human_player"){
-			std::cout<<"name:"<<_name<<": "<< _drawable->x()<<" : "<< _drawable->y()<<std::endl;
-		}
 		if (NEAR_ZERO(_velocity[0]) && NEAR_ZERO(_velocity[1])) {
 			return;
 		}
