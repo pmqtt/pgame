@@ -24,7 +24,8 @@ add_library(pgame STATIC core/panimation.cpp
                          datastructs/phashmap.cpp
                          physic/pcollider.cpp
                          physic/pphysic.cpp
-                         )
+                         physic/pforce.cpp
+            )
 
 message(STATUS "SDL2_INCLUDE_DIRS: ${SDL2_INCLUDE_DIRS}")
 message(STATUS "SDL2_LIBRARIES: ${SDL2_LIBRARIES}")
@@ -69,6 +70,8 @@ add_core_test(core_test_0005)
 add_core_test(core_test_0006)
 add_core_test(core_test_0007)
 add_core_test(core_test_0008)
+add_core_test(core_test_0009)
+
 
 # GUI TESTS
 add_core_test(gui_test_0001)

@@ -34,10 +34,10 @@ struct PColision {
 class PPhysicObject : public std::enable_shared_from_this<PPhysicObject> {
    public:
 	PPhysicObject(std::shared_ptr<PDrawable> drawable)
-		: _drawable(drawable),
+		: std::enable_shared_from_this<PPhysicObject>(),
+          _drawable(drawable),
 		  _gravity(0),
 		  _velocity{0, 0},
-		  _velocity_direction(0),
 		  _restition(1),
 		  _acceleration(0),
 		  _colision(nullptr) {
@@ -45,28 +45,28 @@ class PPhysicObject : public std::enable_shared_from_this<PPhysicObject> {
 	}
 
 	PPhysicObject(std::shared_ptr<PDrawable> drawable, std::shared_ptr<PCollider> colider)
-		: _drawable(drawable),
+		: std::enable_shared_from_this<PPhysicObject>(),
+          _drawable(drawable),
 		  _gravity(0.0),
 		  _velocity{0, 0},
-		  _velocity_direction(0),
 		  _restition(1),
 		  _collider(colider),
 		  _colision(nullptr) {
 		_collide = false;
 	}
 
-	PPhysicObject(const PPhysicObject& a) {
+	PPhysicObject(const PPhysicObject& a) : std::enable_shared_from_this<PPhysicObject>(){
 		_name = a._name;
 		_drawable = a._drawable->clone();
 		_gravity = a._gravity;
 		_velocity = a._velocity;
-		_velocity_direction = a._velocity_direction;
 		_restition = a._restition;
 		_acceleration = a._acceleration;
 		_collider = a._collider;
 		_colision = a._colision;
 		_collide = a._collide;
 		_timer = a._timer;
+        _mass = a._mass;
 	}
 
 	virtual ~PPhysicObject() = default;
@@ -82,7 +82,7 @@ class PPhysicObject : public std::enable_shared_from_this<PPhysicObject> {
 		_velocity.y(y);
 	}
 
-	void velocity(const PPoint2D& v) { _velocity += v; }
+	void velocity(const PPoint2D& v) { _velocity = v; }
 
 	auto velocity() const -> PPoint2D { return _velocity; }
 
@@ -126,30 +126,53 @@ class PPhysicObject : public std::enable_shared_from_this<PPhysicObject> {
 
 	void add_force(std::shared_ptr<PForce> force) { _forces.push_back(force); }
 
-	 void update(float deltaTime) {
+	void handle_collision(float deltaT);
+
+	void update(float deltaTime) {
         for (const auto& force : _forces) {
             force->apply_to(shared_from_this(), deltaTime);
         }
-        
-        PPoint2D p = _velocity * deltaTime;
-		_drawable->add({p[0], p[1]});
+		float x = _velocity[0] * deltaTime;
+		float y = _velocity[1] * deltaTime;
+		_drawable->add({x, y});
     }
+
+	void mass(float mass) { _mass = mass; }	
+	auto mass() const -> float { return _mass; }
+	auto inv_mass() const->float{ 
+		return _mass > 0.0f ? 1.0f/_mass : 0.0f; 
+	}
+
+	void rotation(float angle) { _rotation[0] = angle; }
+	void rotation_velocity(float vel){ _rotation[1] = vel; }
+	void rotation_vec(const PPoint2D& vec){ _rotation = vec; }
+	auto rotation() const -> const PPoint2D & { return _rotation; }
+
+	auto is_static() const -> bool { return _is_static; }
+	void is_static(bool value) { _is_static = value; }
+	
 
    private:
     std::string _name;
 	std::shared_ptr<PDrawable> _drawable;
-	float _gravity;
-	PPoint2D _velocity;
-	float _velocity_direction;
-	float _restition;
 	std::shared_ptr<PCollider> _collider;
-	bool _collide;
-	PPoint2D _colide_point;
-	float _acceleration;
-	std::shared_ptr<PPhysicObject> _colide_with;
 	std::shared_ptr<PColision> _colision;
-	PTimer _timer;
 	std::vector<std::shared_ptr<PForce>> _forces;
+
+	float _gravity;
+	float _acceleration;
+	float _restition;
+	float _mass = 0.0;
+
+	PPoint2D _velocity;
+
+	PPoint2D _rotation; // x = angle, y = angular velocity
+	
+	bool _collide;
+	PTimer _timer;
+	
+	bool _is_static = true;
+
 };
 
 #endif	// PPHYSIC_H

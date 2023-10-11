@@ -46,19 +46,45 @@ auto PPhysicObject::collide(std::shared_ptr<PPhysicObject> other, float time, fl
 		return -1.0;
 	}
 
+	void PPhysicObject::handle_collision(float deltaT){
+		if (NEAR_ZERO(_velocity[0]) && NEAR_ZERO(_velocity[1])) {
+            std::cout<<"no velocity\n";
+			return;
+		}
+		auto collision_normal = _collider->normals().normalized();
+		if(collision_normal[0] != collision_normal[0] || collision_normal[1] != collision_normal[1]){
+			std::cout<<"nan\n";
+            return;
+		}
+		const float dot_product = _velocity[0] * collision_normal[0] + _velocity[1] * collision_normal[1];
+		float J = -(1.0 + _restition) * dot_product;
+        //J /= 2;
+
+		_velocity[0] += J * collision_normal[0];
+		_velocity[1] += J * collision_normal[1];
+        std::cout<<"J: "<<J<< " v:"<<_velocity<<"\n";
+
+        /*if(std::abs(J) <1){
+            _velocity[0] = 0;
+            _velocity[1] = 0;
+        }*/
+		
+
+		if(NEAR_ZERO(_velocity[0])){
+			_velocity[0] = 0;
+		}
+		if(NEAR_ZERO(_velocity[1])){
+			_velocity[1] = 0;
+		}
+	}
+
 	void PPhysicObject::move(float delta_time) {
 		if (NEAR_ZERO(_velocity[0]) && NEAR_ZERO(_velocity[1])) {
 			return;
 		}
 
 		if (_collide) {
-			auto collision_normal = _colision->normals.normalized();
-			if(collision_normal[0] != collision_normal[0] || collision_normal[1] != collision_normal[1]){
-				return;
-			}
-			const float dot_product = _velocity[0] * collision_normal[0] + _velocity[1] * collision_normal[1];
-			_velocity[0] -= (1 + _restition) * dot_product * collision_normal[0];
-			_velocity[1] -= (1 + _restition) * dot_product * collision_normal[1];
+			handle_collision(delta_time);
 		} else {
 			_velocity[1] += _gravity * delta_time;
 			_velocity[0] += _acceleration * delta_time;

@@ -84,6 +84,69 @@ class PEngine {
         return _collisions;
     }
 
+	void simulate_step(double deltaT){
+		std::size_t elements_count = _physic_objects.size();
+        //Store Items to handle collision events
+        _collisions.clear();
+		PQuadtree<std::shared_ptr<PPhysicObject>> quadtree(0, 0, 1200, 800);
+		// Insert all physics objects into the quadtree
+		for (auto& iter : _physic_objects) {
+			quadtree.insert(iter.second);
+		}
+   		_collison_names.clear();
+		float remainingTime = deltaT;
+		std::shared_ptr<PPhysicObject> tmp_objA;
+		std::shared_ptr<PPhysicObject> tmp_objB;
+    	while (remainingTime > 0) {
+			float earliestTOI = remainingTime;
+			std::shared_ptr<PPhysicObject> objA;
+			std::shared_ptr<PPhysicObject> objB;
+
+			for (auto obj : _physic_objects) {
+				auto candidates = quadtree.retrieve(obj.second);
+				for (auto candidate : candidates) {
+					if (obj.second != candidate) {  
+						if(tmp_objA && tmp_objB){
+                            if(tmp_objA == obj.second && tmp_objB == candidate){
+                                continue;
+                            }
+                            if(tmp_objA == candidate && tmp_objB == obj.second){
+                                continue;
+                            }
+                        }
+                        if(NEAR_ZERO(obj.second->velocity().quad_length() && NEAR_ZERO(candidate->velocity().quad_length()))){
+							continue;
+						}
+                    
+						float toi = obj.second->compute_toi(candidate, remainingTime);
+                        if (toi > -1 && toi < earliestTOI) {
+							earliestTOI = toi;
+							objA = obj.second;
+							objB = candidate;
+						}
+					}
+				}
+			}
+			if (objA && objB) {
+			  	for (auto obj : _physic_objects) {
+        			obj.second->update(earliestTOI);
+    			}
+                objA->handle_collision(earliestTOI);
+				objB->handle_collision(earliestTOI);
+				
+                tmp_objA = objA;
+                tmp_objB = objB;
+				remainingTime -= earliestTOI;
+			} else {
+				for (auto obj : _physic_objects) {
+        			obj.second->update(remainingTime);
+    			}
+				remainingTime = 0;
+			}
+		}
+	}
+
+
 	void handle_collision(double delta_time) {
 		std::size_t elements_count = _physic_objects.size();
         //Store Items to handle collision events
