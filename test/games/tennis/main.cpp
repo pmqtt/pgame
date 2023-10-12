@@ -54,9 +54,10 @@ auto create_ball(float x, float y) -> std::shared_ptr<PPhysicObject> {
     auto drawable = std::make_shared<PRect>(x, y, 10, 10, true);
     auto object = std::make_shared<PPhysicObject>(drawable, std::make_shared<PSatCollider>());
     object->velocity(-80.0, 15.0);
-    object->gravity(0.0);
     object->acceleration(0.0);
     object->restitution(1.0);
+    object->mass(1.0);
+    object->is_static(false);
     return object;
 }
 
@@ -64,9 +65,10 @@ auto create_player(float x, float y) -> std::shared_ptr<PPhysicObject> {
     auto drawable = std::make_shared<PRect>(x,y, 10, 50, true);
     auto object = std::make_shared<PPhysicObject>(drawable, std::make_shared<PSatCollider>());
     object->velocity(0.0, 0.0);
-    object->gravity(0.0);
     object->acceleration(0.0);
     object->restitution(1.0);
+    object->mass(0.0);
+    object->is_static(false);
     return object;
 }
 
@@ -85,6 +87,11 @@ void create_field(PEventLoop& loop) {
     left_object->velocity(0.0, 0.0);
     right_object->velocity(0.0, 0.0);
     bottom_object->velocity(0.0, 0.0);
+
+    top_object->is_static(true);
+    left_object->is_static(true);
+    right_object->is_static(true);
+    bottom_object->is_static(true);
 
     loop.add_physics_object("field_top", top_object);
     loop.add_physics_object("field_left", left_object);
@@ -106,7 +113,7 @@ auto main(int argc, char** argv) -> int {
     event_loop.add_key_down_listener(std::make_shared<PressEscape>());
 	event_loop.add_key_down_listener(std::make_shared<PressTop>());
 	event_loop.add_key_down_listener(std::make_shared<PressBottom>());
-	event_loop.add_physics_object("human_player", create_player(40, HEIGHT/2-50));
+	event_loop.add_physics_object("human_player", create_player(40, HEIGHT/2-50)); 
 	event_loop.add_physics_object("computer_player", create_player(WIDTH-50, HEIGHT/2-50));
     event_loop.add_physics_object("ball", create_ball(WIDTH/2-50, HEIGHT/2));
     create_field(event_loop);

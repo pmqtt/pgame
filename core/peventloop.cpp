@@ -81,20 +81,16 @@ void PEventLoop::run() {
            if(_collision_listeners.find(collision) != _collision_listeners.end()){
                 _collision_listeners[collision]->on_event(this, 
                                                       collision, 
-                                                      _engine.objects()[collision.name1], 
-                                                      _engine.objects()[collision.name2]);
+                                                      _engine.all_objects()[collision.name1], 
+                                                      _engine.all_objects()[collision.name2]);
            }
         }
 
 		SDL_SetRenderDrawColor(_renderer.get(), 0, 0, 0, 255);
 		SDL_RenderClear(_renderer.get());
-        if(should_use_physic_engine){
-            _engine.simulate_step(_delta_time);
-        }else{
-            for (auto& physic : _engine.objects()) {
-                physic.second->move(_delta_time);
-            }
-        }
+        
+        _engine.simulate_step(_delta_time);
+        
 		for (auto& moveable : _moveables) {
 			moveable.second->draw(_renderer);
 		}
@@ -105,9 +101,6 @@ void PEventLoop::run() {
             gui_element.second->draw(_renderer);
         }
 
-        if(!should_use_physic_engine){
-		    _engine.handle_collision(_delta_time);
-        }
 
 		SDL_RenderPresent(_renderer.get());
 
@@ -117,6 +110,7 @@ void PEventLoop::run() {
 		}
         //stop();
 	}
+    std::exit(0);
 }
 
 void PEventLoop::stop() { _stopped = true; }

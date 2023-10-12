@@ -26,17 +26,20 @@ auto main(int argc, char** argv) -> int {
 
 	auto drawable = std::make_shared<PRect>(500, 0, 10, 10);
 	auto object = std::make_shared<PPhysicObject>(drawable, std::make_shared<PSatCollider>());
-	object->gravity(98.1);
 	object->velocity(-30, 0.001);
 	object->restitution(0.8);
+	object->mass(1.0);
+	object->is_static(false);
+	object->add_force(std::make_shared<PGravity>(PPoint2D{0.0,98.1}));
+	event_loop.enable_physic_simulation();
 	event_loop.add_physics_object("obj", object);
 
 	auto static_draw1 = std::make_shared<PRect>(150, 300, 300, 50, false);
 	auto static_draw2 = std::make_shared<PRect>(400, 230, 140, 100, false);
 
 	static_draw1->rotate(-22.5);
-	event_loop.add_physics_object("static_draw1", std::make_shared<PPhysicObject>(static_draw1));
-	event_loop.add_physics_object("static_draw2", std::make_shared<PPhysicObject>(static_draw2));
+	event_loop.add_physics_object("static_draw1", std::make_shared<PPhysicObject>(static_draw1,std::make_shared<PSatCollider>()));
+	event_loop.add_physics_object("static_draw2", std::make_shared<PPhysicObject>(static_draw2,std::make_shared<PSatCollider>()));
 	event_loop.run();
 	return 0;
 }

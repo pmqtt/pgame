@@ -69,6 +69,8 @@ struct PDrawable {
 		_changed = true;
 	}
 
+	auto center()const -> PPoint2D { return {_x,_y}; }
+
 	auto fill() const -> bool { return _fill; }
 
 	virtual auto bounding_box() const -> std::array<PPoint2D, 4> = 0;

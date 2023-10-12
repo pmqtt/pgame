@@ -56,6 +56,16 @@ auto PCircleCollider::collide(std::shared_ptr<PDrawable> p1, std::shared_ptr<PDr
 }
 
 auto PSatCollider::collide(std::shared_ptr<PDrawable> p1, std::shared_ptr<PDrawable> p2) const -> bool  {
+    if(false){
+        std::cout<<"P1: "<<p1->bounding_box()[0]
+                    <<","<<p1->bounding_box()[1]
+                    <<","<<p1->bounding_box()[2]
+                    <<","<<p1->bounding_box()[3]<<"\n";
+        std::cout<<"P2: "<<p2->bounding_box()[0]
+                    <<","<<p2->bounding_box()[1]
+                    <<","<<p2->bounding_box()[2]
+                    <<","<<p2->bounding_box()[3]<<std::endl;
+    }
     PPoint2D smallestOverlapAxis1 = {0, 0};
     float smallestOverlap1 = std::numeric_limits<float>::max();
     PPoint2D smallestOverlapAxis2 = {0, 0};
@@ -99,6 +109,7 @@ auto PSatCollider::collide(std::shared_ptr<PDrawable> p1, std::shared_ptr<PDrawa
             _edge_point4 = point2;
         }
     }
+    
     if (smallestOverlap1 < smallestOverlap2) {
         _collision_normal = smallestOverlapAxis1;
         _collision_normal2 = smallestOverlapAxis2;
@@ -108,6 +119,15 @@ auto PSatCollider::collide(std::shared_ptr<PDrawable> p1, std::shared_ptr<PDrawa
         _collision_normal2 = smallestOverlapAxis1;
         _mtv = {smallestOverlap2 * smallestOverlapAxis2[0], smallestOverlap2 * smallestOverlapAxis2[1]};
     }
+
+    // Überprüfung und Anpassung der Kollisionsnormale, falls notwendig
+    PPoint2D directionFromP1toP2 = p2->center() - p1->center();  // angenommen, dass PDrawable eine center() Methode hat
+    if (dot(_collision_normal, directionFromP1toP2) < 0) {
+        _collision_normal = _collision_normal*-1;  // Umkehren der Kollisionsnormale
+        _collision_normal2 = _collision_normal2*-1;
+        _mtv = _mtv *-1;
+    }
+
     return true;
 }
 

@@ -70,7 +70,6 @@ add_core_test(core_test_0005)
 add_core_test(core_test_0006)
 add_core_test(core_test_0007)
 add_core_test(core_test_0008)
-add_core_test(core_test_0009)
 
 
 # GUI TESTS
