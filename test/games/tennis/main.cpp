@@ -78,20 +78,10 @@ void create_field(PEventLoop& loop) {
     auto right = std::make_shared<PRect>(WIDTH-20, 10, 10, HEIGHT-20, true);
     auto bottom = std::make_shared<PRect>(10, HEIGHT-20, WIDTH-20, 10, true);
 
-    auto top_object = std::make_shared<PPhysicObject>(top, std::make_shared<PSatCollider>());
-    auto left_object = std::make_shared<PPhysicObject>(left, std::make_shared<PSatCollider>());
-    auto right_object = std::make_shared<PPhysicObject>(right, std::make_shared<PSatCollider>());
-    auto bottom_object = std::make_shared<PPhysicObject>(bottom, std::make_shared<PSatCollider>());
-
-    top_object->velocity(0.0, 0.0);
-    left_object->velocity(0.0, 0.0);
-    right_object->velocity(0.0, 0.0);
-    bottom_object->velocity(0.0, 0.0);
-
-    top_object->is_static(true);
-    left_object->is_static(true);
-    right_object->is_static(true);
-    bottom_object->is_static(true);
+    auto top_object = make_physic_object(top, std::make_shared<PSatCollider>());
+    auto left_object = make_physic_object(left, std::make_shared<PSatCollider>());
+    auto right_object = make_physic_object(right, std::make_shared<PSatCollider>());
+    auto bottom_object = make_physic_object(bottom, std::make_shared<PSatCollider>());
 
     loop.add_physics_object("field_top", top_object);
     loop.add_physics_object("field_left", left_object);

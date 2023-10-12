@@ -151,4 +151,9 @@ class PPhysicObject : public std::enable_shared_from_this<PPhysicObject> {
 	bool _is_static = true;
 };
 
+template<class... Args>
+auto make_physic_object(Args&&... args) -> std::shared_ptr<PPhysicObject> {
+	return std::make_shared<PPhysicObject>(std::forward<Args>(args)...);
+}
+
 #endif	// PPHYSIC_H
