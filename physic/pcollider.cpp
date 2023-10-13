@@ -66,19 +66,19 @@ auto PSatCollider::collide(std::shared_ptr<PDrawable> p1, std::shared_ptr<PDrawa
                     <<","<<p2->bounding_box()[2]
                     <<","<<p2->bounding_box()[3]<<std::endl;
     }
-    PPoint2D smallestOverlapAxis1 = {0, 0};
+    PVector2D smallestOverlapAxis1 = {0, 0};
     float smallestOverlap1 = std::numeric_limits<float>::max();
-    PPoint2D smallestOverlapAxis2 = {0, 0};
+    PVector2D smallestOverlapAxis2 = {0, 0};
     float smallestOverlap2 = std::numeric_limits<float>::max();
 
     // Check axes of shape1
     auto shape1 = p1->bounding_box();
     auto shape2 = p2->bounding_box();
     for (size_t i = 0; i < shape1.size(); ++i) {
-        PPoint2D point1 = shape1[i];
-        PPoint2D point2 = shape1[(i + 1) % shape1.size()];
-        PPoint2D edge = point2 - point1;
-        PPoint2D axis = perpendicular(edge);
+        PVector2D point1 = shape1[i];
+        PVector2D point2 = shape1[(i + 1) % shape1.size()];
+        PVector2D edge = point2 - point1;
+        PVector2D axis = perpendicular(edge);
         axis.normalize();
         float overlap = overlapAmount(axis, shape1, shape2);
         if (overlap < 0) {
@@ -93,10 +93,10 @@ auto PSatCollider::collide(std::shared_ptr<PDrawable> p1, std::shared_ptr<PDrawa
         }
     }
     for (size_t i = 0; i < shape2.size(); ++i) {
-        PPoint2D point1 = shape2[i];
-        PPoint2D point2 = shape2[(i + 1) % shape2.size()];
-        PPoint2D edge = point2 - point1;
-        PPoint2D axis = perpendicular(edge);
+        PVector2D point1 = shape2[i];
+        PVector2D point2 = shape2[(i + 1) % shape2.size()];
+        PVector2D edge = point2 - point1;
+        PVector2D axis = perpendicular(edge);
         axis.normalize();
         float overlap = overlapAmount(axis, shape1, shape2);
         if (overlap < 0) {
@@ -121,7 +121,7 @@ auto PSatCollider::collide(std::shared_ptr<PDrawable> p1, std::shared_ptr<PDrawa
     }
 
     // Überprüfung und Anpassung der Kollisionsnormale, falls notwendig
-    PPoint2D directionFromP1toP2 = p2->center() - p1->center();  // angenommen, dass PDrawable eine center() Methode hat
+    PVector2D directionFromP1toP2 = p2->center() - p1->center();  // angenommen, dass PDrawable eine center() Methode hat
     if (dot(_collision_normal, directionFromP1toP2) < 0) {
         _collision_normal = _collision_normal*-1;  // Umkehren der Kollisionsnormale
         _collision_normal2 = _collision_normal2*-1;
@@ -131,7 +131,7 @@ auto PSatCollider::collide(std::shared_ptr<PDrawable> p1, std::shared_ptr<PDrawa
     return true;
 }
 
-auto PSatCollider::overlapAmount(const PPoint2D &axis, const PVertices2D &shape1, const PVertices2D &shape2) const -> float {
+auto PSatCollider::overlapAmount(const PVector2D &axis, const PVertices2D &shape1, const PVertices2D &shape2) const -> float {
     float min1 = std::numeric_limits<float>::max();
     float max1 = std::numeric_limits<float>::min();
     for (const auto &point : shape1) {

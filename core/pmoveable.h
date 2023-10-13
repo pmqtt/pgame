@@ -1,7 +1,7 @@
 #ifndef PMOVEABLE_H
 #define PMOVEABLE_H
 #include "pprimitive.h"
-#include "ppoint2d.h"
+#include "pvector2d.h"
 #include "../physic/pcollider.h"
 
 #include <optional>
@@ -20,14 +20,14 @@ class PMoveable{
 
 
 
-        void move(const PPoint2D& v) {
+        void move(const PVector2D& v) {
             _drawable->position(_drawable->x() + v.x(), _drawable->y() + v.y());
         }
 
-        auto inpact_on_way(const PPoint2D &v, std::shared_ptr<PDrawable> other) -> std::optional<PPoint2D> {
+        auto inpact_on_way(const PVector2D &v, std::shared_ptr<PDrawable> other) -> std::optional<PVector2D> {
             if(_collider){
                 if(_collider->collide(_drawable, other)){
-                    return PPoint2D(0,0);
+                    return PVector2D(0,0);
                 }
 
                 const float x1 = _drawable->x();
@@ -63,7 +63,7 @@ class PMoveable{
                         for(float y = y1; y < y2; y += 0.1){
                             _drawable->position(x1,y);
                             if(_collider->collide(_drawable, other)){
-                                return PPoint2D(x1, y);
+                                return PVector2D(x1, y);
                             }
                         }
                         return std::nullopt;
@@ -71,7 +71,7 @@ class PMoveable{
                         for(float x = x1; x < x2; x += 0.1){
                             _drawable->position(x,y1);
                             if(_collider->collide(_drawable, other)){
-                                return PPoint2D(x, y1);
+                                return PVector2D(x, y1);
                             }
                         }
                         return std::nullopt;
@@ -79,7 +79,7 @@ class PMoveable{
                         for(float x = x1; x < x2; x += 0.1){
                             _drawable->position(x, line_function(x));
                             if(_collider->collide(_drawable, other)){
-                                return PPoint2D(x, line_function(x));
+                                return PVector2D(x, line_function(x));
                             }
                         }
                         return std::nullopt;

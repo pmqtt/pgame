@@ -30,7 +30,7 @@ auto main(int argc, char** argv) -> int {
 	object->restitution(0.8);
 	object->mass(1.0);
 	object->is_static(false);
-	object->add_force(std::make_shared<PGravity>(PPoint2D{0.0,98.1}));
+	object->add_force(std::make_shared<PGravity>(PVector2D{0.0,98.1}));
 	event_loop.enable_physic_simulation();
 	event_loop.add_physics_object("obj", object);
 

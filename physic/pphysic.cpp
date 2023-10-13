@@ -34,5 +34,16 @@ auto PPhysicObject::compute_toi(std::shared_ptr<PPhysicObject> other, float time
 }
 
 void PPhysicObject::move(float delta_time) {
-	
+	P_UNUSED(delta_time);
+}
+
+auto operator<<(std::ostream& os, const std::shared_ptr<PPhysicObject>& obj) -> std::ostream&{
+	std::string static_str = obj->is_static() ? "yes" : "no";
+	os << "name:"     << obj->name()     << " " 
+	   << "pos:"      << obj->position() << " "
+	   << "velocity:" << obj->velocity() << " " 
+	   << "rotation"  << obj->rotation() << " " 
+	   << "mass:"     << obj->mass()     << " " 
+	   << "static:"   << static_str;
+	return os;
 }

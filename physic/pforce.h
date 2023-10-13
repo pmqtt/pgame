@@ -10,12 +10,12 @@ struct PForce {
 
 class PGravity : public PForce {
 public:
-    PGravity(const PPoint2D& gravity) : _gravity(gravity) {}
+    PGravity(const PVector2D& gravity) : _gravity(gravity) {}
 
     void apply_to(std::shared_ptr<PPhysicObject> obj, float deltaT) override ;
 
 private:
-    PPoint2D _gravity;
+    PVector2D _gravity;
 };
 
 #endif // PFORCE_H

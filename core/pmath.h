@@ -5,7 +5,7 @@
 #include <iostream>
 #include <random>
 
-#include "ppoint2d.h"
+#include "pvector2d.h"
 
 constexpr auto NEAR_ZERO(float x) -> bool { return (x < 0.001 && x > -0.001); }
 
@@ -251,13 +251,13 @@ constexpr auto angle_between_vectors(double vx, double vy, double nx, double ny)
 // xc, yc: center of rotation
 // x, y: point to rotate
 // rad: angle in radian
-constexpr auto rotate_point(float xc, float yc, float x, float y, float rad) -> PPoint2D {
+constexpr auto rotate_point(float xc, float yc, float x, float y, float rad) -> PVector2D {
 	const float xr1 = (x - xc) * cos(rad) + (y - yc) * sin(rad) + xc;
 	const float yr1 = -(x - xc) * sin(rad) + (y - yc) * cos(rad) + yc;
 	return {xr1, yr1};
 }
 
-constexpr auto distance_between_points(const PPoint2D& p1, const PPoint2D& p2) -> float {
+constexpr auto distance_between_points(const PVector2D& p1, const PVector2D& p2) -> float {
 	return std::sqrt(std::pow(p1[0] - p2[0], 2) + std::pow(p1[1] - p2[1], 2));
 }
 

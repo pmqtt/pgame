@@ -28,7 +28,7 @@ auto main(int argc, char** argv) -> int {
 	object->velocity(30, 0.001);
 	object->restitution(0.6);
 	object->mass(1.0);
-	auto gravity = std::make_shared<PGravity>(PPoint2D{0.0,98.1});
+	auto gravity = std::make_shared<PGravity>(PVector2D{0.0,98.1});
 	object->add_force(gravity);
 	object->is_static(false);
 	event_loop.enable_physic_simulation();

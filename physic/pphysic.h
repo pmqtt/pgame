@@ -54,9 +54,9 @@ class PPhysicObject : public std::enable_shared_from_this<PPhysicObject> {
 		_velocity.y(y);
 	}
 
-	void velocity(const PPoint2D& v) { _velocity = v; }
+	void velocity(const PVector2D& v) { _velocity = v; }
 
-	auto velocity() const -> PPoint2D { 
+	auto velocity() const -> PVector2D { 
 		if(_is_static){
 			return {0,0};
 		}
@@ -85,7 +85,7 @@ class PPhysicObject : public std::enable_shared_from_this<PPhysicObject> {
 
 	auto drawable() const ->std::shared_ptr<PDrawable> { return _drawable; }
 
-	auto position() const -> PPoint2D { return {_drawable->x(), _drawable->y()}; }
+	auto position() const -> PVector2D { return {_drawable->x(), _drawable->y()}; }
 
 	auto name() const -> std::string { return _name; }
 
@@ -119,8 +119,8 @@ class PPhysicObject : public std::enable_shared_from_this<PPhysicObject> {
 
 	void rotation(float angle) { _rotation[0] = angle; }
 	void rotation_velocity(float vel){ _rotation[1] = vel; }
-	void rotation_vec(const PPoint2D& vec){ _rotation = vec; }
-	auto rotation() const -> const PPoint2D & { return _rotation; }
+	void rotation_vec(const PVector2D& vec){ _rotation = vec; }
+	auto rotation() const -> const PVector2D & { return _rotation; }
 
 	auto is_static() const -> bool { return _is_static; }
 	void is_static(bool value) { _is_static = value; }
@@ -146,14 +146,32 @@ class PPhysicObject : public std::enable_shared_from_this<PPhysicObject> {
 	float _restition;
 	float _mass = 0.0;
 
-	PPoint2D _velocity;
-	PPoint2D _rotation; // x = angle, y = angular velocity
+	PVector2D _velocity;
+	PVector2D _rotation; // x = angle, y = angular velocity
 	bool _is_static = true;
 };
 
 template<class... Args>
 auto make_physic_object(Args&&... args) -> std::shared_ptr<PPhysicObject> {
 	return std::make_shared<PPhysicObject>(std::forward<Args>(args)...);
+}
+
+auto operator<<(std::ostream& os, const std::shared_ptr<PPhysicObject>& obj) -> std::ostream&;
+
+namespace std {
+    template<>
+    struct hash<std::shared_ptr<PPhysicObject>> {
+        size_t operator()(const std::shared_ptr<PPhysicObject>& k) const {
+            return std::hash<void*>()(k.get());
+        }
+    };
+    
+    template<>
+    struct equal_to<std::shared_ptr<PPhysicObject>> {
+        bool operator()(const std::shared_ptr<PPhysicObject>& lhs, const std::shared_ptr<PPhysicObject>& rhs) const {
+            return lhs.get() == rhs.get();
+        }
+    };
 }
 
 #endif	// PPHYSIC_H

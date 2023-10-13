@@ -8,6 +8,7 @@
 #include <tuple>
 #include <vector>
 #include <set>
+#include <unordered_set>
 #include <chrono>
 #include <algorithm>
 
@@ -42,12 +43,13 @@ namespace std {
 
 class PEngine {
    public:
-	PEngine() = default;
+	PEngine() : _quadtree(0, 0, 1600, 600){}
 	~PEngine() = default;
 
 	void add_physic_object(const std::string& name, std::shared_ptr<PPhysicObject> physic) {
 		physic->name(name);
 		_physic_objects[name] = physic;
+		_quadtree.insert(physic);
 	}
 
 	void add_moveable(const std::string &name, std::shared_ptr<PMoveable> moveable) {
@@ -60,22 +62,11 @@ class PEngine {
 
     auto collisions() -> std::vector<PCollisionItem> {
         return _collisions;
-    }
-	auto vectorize() -> std::vector<std::shared_ptr<PPhysicObject>> {
-		std::vector<std::shared_ptr<PPhysicObject>> result;
-		for (auto& iter : _physic_objects) {
-			result.push_back(iter.second);
-		}
-		return result;
 	}
 
 	void simulate_step(double deltaT){
 		std::size_t max_iter = 2*_physic_objects.size();
         _collisions.clear();
-		PQuadtree<std::shared_ptr<PPhysicObject>> quadtree(0, 0, 1600, 600);
-		for (auto& iter : _physic_objects) {
-			quadtree.insert(iter.second);
-		}
 		float remainingTime = deltaT;
 		std::list<std::pair<std::shared_ptr<PPhysicObject>, std::shared_ptr<PPhysicObject>>> last_collisions;
     	while (remainingTime > 0 && max_iter-- > 0) {
@@ -83,9 +74,15 @@ class PEngine {
 			std::shared_ptr<PPhysicObject> objA;
 			std::shared_ptr<PPhysicObject> objB;
 			for (auto obj : _physic_objects) {
-				auto candidates = quadtree.retrieve(obj.second);
+				auto candidates = _quadtree.retrieve(obj.second);
 				bool should_break = false;
+				//std::unordered_set<std::shared_ptr<PPhysicObject>> tested_items;
+
 				for (auto candidate : candidates) {
+					//if (tested_items.find(candidate) != tested_items.end()) {
+					//	continue;
+					//}
+					//tested_items.insert(candidate);
 					if (obj.second != candidate) {
 						if(last_collisions.size() > 0){
 							for(auto & last_collision : last_collisions){
@@ -129,16 +126,18 @@ class PEngine {
 			if (objA && objB) {
 			  	for (auto obj : _physic_objects) {
         			obj.second->update(earliestTOI);
+					_quadtree.update(obj.second);
     			}
 				handle_collision(objA, objB, earliestTOI);
 				last_collisions.push_back(std::make_pair(objA, objB));
 				remainingTime -= earliestTOI;
-				quadtree.update(objA);
-				quadtree.update(objB);
+				_quadtree.update(objA);
+				_quadtree.update(objB);
 				_collisions.push_back(PCollisionItem(objA->name(), objB->name()));
 			} else {
 				for (auto obj : _physic_objects) {
         			obj.second->update(earliestTOI);
+					_quadtree.update(obj.second);
     			}
 				remainingTime = 0;
 			}
@@ -148,10 +147,9 @@ class PEngine {
 
 	auto handle_collision(std::shared_ptr<PPhysicObject> &a, std::shared_ptr<PPhysicObject> &b, float delta_time) -> bool {
 		P_UNUSED(delta_time);
-		if(1){
-			std::cout<<"\t\t\t\tHandle collisions:"<<a->name()<<" and "<<b->name()<<"\n";
-			std::cout<<"\t\t\t\tHandle collisions A,B-Position:"<<a->position()<<" and "<<b->position()<<"\n";
-			std::cout<<"\t\t\t\tHandle collisions A,B-Velocity:"<<a->velocity()<<" and "<<b->velocity()<<"\n";
+		if(0){
+			std::cout<<"\t\t\t\tHandle collisions: "<<a<<"\n";
+			std::cout<<"\t\t\t\t                   "<<b<<"\n";
 		}
 		const auto v1 = a->velocity();
 		const auto v2 = b->velocity(); 
@@ -170,18 +168,18 @@ class PEngine {
 		if(velocity.dot(collision_normal) > 0){
 			return false;
 		}
-		a->drawable()->add({b->collider()->mtv()[0],b->collider()->mtv()[1]});
+		a->drawable()->add(b->collider()->mtv());
 		const float restitation = std::min(a->restitution(), b->restitution());
 		const float dot_product = velocity[0] * collision_normal[0] + velocity[1] * collision_normal[1];
 	
 		float J = -(1.0 + restitation) * dot_product;
         if(a->inv_mass() + b->inv_mass() != 0){
 			J /= a->inv_mass() + b->inv_mass();
-			PPoint2D impulse =  collision_normal * J;
+			PVector2D impulse =  collision_normal * J;
 			a->velocity(v1 + impulse * a->inv_mass());
 			b->velocity(v2 - impulse * b->inv_mass());
 		}else{
-			PPoint2D impulse =  collision_normal * J;
+			PVector2D impulse =  collision_normal * J;
 			a->velocity(v1 + impulse );
 			b->velocity(v2 - impulse );
 		}
@@ -195,7 +193,7 @@ class PEngine {
 	std::map<std::string, std::shared_ptr<PPhysicObject>> _physic_objects;
 	std::map<std::string, std::shared_ptr<PMoveable>> _moveable_objects;
     std::vector<PCollisionItem> _collisions;
-    
+	PQuadtree<std::shared_ptr<PPhysicObject>> _quadtree;
 };
 
 #endif	// PENGINE_H

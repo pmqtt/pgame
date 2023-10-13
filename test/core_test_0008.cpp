@@ -22,7 +22,7 @@ auto create_physic_object(int x, int y, float vx, float vy) -> std::shared_ptr<P
 	object->velocity(vx, vy);
 	object->restitution(0.6);
 	object->mass(1.0);
-	auto gravity = std::make_shared<PGravity>(PPoint2D{0.0,98.1});
+	auto gravity = std::make_shared<PGravity>(PVector2D{0.0,98.1});
 	object->add_force(gravity);
 	object->is_static(false);
 	return object;
@@ -37,7 +37,7 @@ auto main(int argc, char** argv) -> int {
 	event_loop.add_key_down_listener(std::make_shared<PressRight>());
 	for (int i = 0; i < 10; ++i) {
 		event_loop.add_physics_object("obj_a" + std::to_string(i),
-									  create_physic_object(i * 20 + 11, i * 20 + 11, 30, 0.001));
+									  create_physic_object(i * 20 + 12, i * 20 + 12, 30, 0.001));
 	}
 	auto object2 = std::make_shared<PPhysicObject>(std::make_shared<PRect>(0, 510, 800, 100, false),std::make_shared<PSatCollider>());
 	event_loop.add_physics_object("obj2", object2);
