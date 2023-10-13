@@ -4,7 +4,7 @@
 #include <memory>
 #include <algorithm>
 #include "../core/pprinter.h"
-#if 0
+#if 1
 template<class T>
 class PQuadtree{
     private:

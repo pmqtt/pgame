@@ -126,7 +126,7 @@ class PEngine {
 			if (objA && objB) {
 			  	for (auto obj : _physic_objects) {
         			obj.second->update(earliestTOI);
-					_quadtree.update(obj.second);
+					//_quadtree.update(obj.second);
     			}
 				handle_collision(objA, objB, earliestTOI);
 				last_collisions.push_back(std::make_pair(objA, objB));
@@ -137,7 +137,7 @@ class PEngine {
 			} else {
 				for (auto obj : _physic_objects) {
         			obj.second->update(earliestTOI);
-					_quadtree.update(obj.second);
+				//	_quadtree.update(obj.second);
     			}
 				remainingTime = 0;
 			}
