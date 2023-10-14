@@ -299,7 +299,7 @@ private:
     std::size_t _max_levels;
     std::size_t _level;
     std::vector<T> _objects;
-    std::vector<std::shared_ptr<PQuadtree>> _nodes;
+    std::vector<std::unique_ptr<PQuadtree>> _nodes;
 
     void split() {
         double sub_width = _width / 2.0;
@@ -307,10 +307,10 @@ private:
         double x = _x;
         double y = _y;
 
-        _nodes.push_back(std::make_shared<PQuadtree>(x + sub_width, y, sub_width, sub_height, _max_objects, _max_levels, _level + 1));
-        _nodes.push_back(std::make_shared<PQuadtree>(x, y, sub_width, sub_height, _max_objects, _max_levels, _level + 1));
-        _nodes.push_back(std::make_shared<PQuadtree>(x, y + sub_height, sub_width, sub_height, _max_objects, _max_levels, _level + 1));
-        _nodes.push_back(std::make_shared<PQuadtree>(x + sub_width, y + sub_height, sub_width, sub_height, _max_objects, _max_levels, _level + 1));
+        _nodes.push_back(std::make_unique<PQuadtree>(x + sub_width, y, sub_width, sub_height, _max_objects, _max_levels, _level + 1));
+        _nodes.push_back(std::make_unique<PQuadtree>(x, y, sub_width, sub_height, _max_objects, _max_levels, _level + 1));
+        _nodes.push_back(std::make_unique<PQuadtree>(x, y + sub_height, sub_width, sub_height, _max_objects, _max_levels, _level + 1));
+        _nodes.push_back(std::make_unique<PQuadtree>(x + sub_width, y + sub_height, sub_width, sub_height, _max_objects, _max_levels, _level + 1));
     }
 
     int get_index(T object) {
@@ -338,6 +338,7 @@ private:
                 return 3;
             }
         }
+
         return -1;
     }
 };

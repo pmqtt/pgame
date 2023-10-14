@@ -8,7 +8,6 @@
 #include <tuple>
 #include <vector>
 #include <set>
-#include <unordered_set>
 #include <chrono>
 #include <algorithm>
 
@@ -43,13 +42,12 @@ namespace std {
 
 class PEngine {
    public:
-	PEngine() : _quadtree(0, 0, 1600, 600){}
+	PEngine() = default;
 	~PEngine() = default;
 
 	void add_physic_object(const std::string& name, std::shared_ptr<PPhysicObject> physic) {
 		physic->name(name);
 		_physic_objects[name] = physic;
-		_quadtree.insert(physic);
 	}
 
 	void add_moveable(const std::string &name, std::shared_ptr<PMoveable> moveable) {
@@ -67,6 +65,10 @@ class PEngine {
 	void simulate_step(double deltaT){
 		std::size_t max_iter = 2*_physic_objects.size();
         _collisions.clear();
+		PQuadtree<std::shared_ptr<PPhysicObject>> quadtree(0, 0, 1600, 600);
+		for (auto& iter : _physic_objects) {
+			quadtree.insert(iter.second);
+		}
 		float remainingTime = deltaT;
 		std::list<std::pair<std::shared_ptr<PPhysicObject>, std::shared_ptr<PPhysicObject>>> last_collisions;
     	while (remainingTime > 0 && max_iter-- > 0) {
@@ -74,15 +76,9 @@ class PEngine {
 			std::shared_ptr<PPhysicObject> objA;
 			std::shared_ptr<PPhysicObject> objB;
 			for (auto obj : _physic_objects) {
-				auto candidates = _quadtree.retrieve(obj.second);
+				auto candidates = quadtree.retrieve(obj.second);
 				bool should_break = false;
-				//std::unordered_set<std::shared_ptr<PPhysicObject>> tested_items;
-
 				for (auto candidate : candidates) {
-					//if (tested_items.find(candidate) != tested_items.end()) {
-					//	continue;
-					//}
-					//tested_items.insert(candidate);
 					if (obj.second != candidate) {
 						if(last_collisions.size() > 0){
 							for(auto & last_collision : last_collisions){
@@ -126,18 +122,16 @@ class PEngine {
 			if (objA && objB) {
 			  	for (auto obj : _physic_objects) {
         			obj.second->update(earliestTOI);
-					//_quadtree.update(obj.second);
     			}
 				handle_collision(objA, objB, earliestTOI);
 				last_collisions.push_back(std::make_pair(objA, objB));
 				remainingTime -= earliestTOI;
-				_quadtree.update(objA);
-				_quadtree.update(objB);
+				quadtree.update(objA);
+				quadtree.update(objB);
 				_collisions.push_back(PCollisionItem(objA->name(), objB->name()));
 			} else {
 				for (auto obj : _physic_objects) {
         			obj.second->update(earliestTOI);
-				//	_quadtree.update(obj.second);
     			}
 				remainingTime = 0;
 			}
@@ -193,7 +187,7 @@ class PEngine {
 	std::map<std::string, std::shared_ptr<PPhysicObject>> _physic_objects;
 	std::map<std::string, std::shared_ptr<PMoveable>> _moveable_objects;
     std::vector<PCollisionItem> _collisions;
-	PQuadtree<std::shared_ptr<PPhysicObject>> _quadtree;
+
 };
 
 #endif	// PENGINE_H
