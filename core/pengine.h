@@ -75,10 +75,13 @@ class PEngine {
 			float earliestTOI = remainingTime;
 			std::shared_ptr<PPhysicObject> objA;
 			std::shared_ptr<PPhysicObject> objB;
-			for (auto obj : _physic_objects) {
+			for (auto & obj : _physic_objects) {
+				if(obj.second->is_static()){
+					continue;
+				}
 				auto candidates = quadtree.retrieve(obj.second);
 				bool should_break = false;
-				for (auto candidate : candidates) {
+				for (auto & candidate : candidates) {
 					if (obj.second != candidate) {
 						if(last_collisions.size() > 0){
 							for(auto & last_collision : last_collisions){
@@ -100,37 +103,27 @@ class PEngine {
 							continue;
 						}
 						float toi;
-						if(obj.second->is_static()){
-							toi = candidate->compute_toi(obj.second, remainingTime);
-						}else{
-							toi = obj.second->compute_toi(candidate, remainingTime);
-						}
+						toi = obj.second->compute_toi(candidate, remainingTime);
                         if (toi > -1 && toi < earliestTOI) {
-							if(obj.second->is_static()){
-								earliestTOI = toi;
-								objA =  candidate;
-								objB =  obj.second;	
-							}else{
 								earliestTOI = toi;
 								objA = obj.second;
 								objB = candidate;
-							}			
 						}
 					}
 				}
 			}
 			if (objA && objB) {
-			  	for (auto obj : _physic_objects) {
+			  	for (auto & obj : _physic_objects) {
         			obj.second->update(earliestTOI);
     			}
 				handle_collision(objA, objB, earliestTOI);
-				last_collisions.push_back(std::make_pair(objA, objB));
+				last_collisions.emplace_back(objA, objB);
 				remainingTime -= earliestTOI;
 				quadtree.update(objA);
 				quadtree.update(objB);
-				_collisions.push_back(PCollisionItem(objA->name(), objB->name()));
+				_collisions.emplace_back(objA->name(), objB->name());
 			} else {
-				for (auto obj : _physic_objects) {
+				for (auto & obj : _physic_objects) {
         			obj.second->update(earliestTOI);
     			}
 				remainingTime = 0;
@@ -152,9 +145,10 @@ class PEngine {
 		if (NEAR_ZERO(velocity[0]) && NEAR_ZERO(velocity[1])) {
 			return false;
 		}
-		const auto collider = a->collider();
+		//const auto collider = a->collider();
 
-		auto collision_normal =  b->collider()->normals().normalized();
+
+		auto collision_normal =  a->collider()->normals().normalized() * -1.0f;
 		if(collision_normal[0] != collision_normal[0] || collision_normal[1] != collision_normal[1]){
             return false;
 		}
@@ -162,11 +156,11 @@ class PEngine {
 		if(velocity.dot(collision_normal) > 0){
 			return false;
 		}
-		a->drawable()->add(b->collider()->mtv());
+		a->drawable()->add(a->collider()->mtv()* -1.0f);
 		const float restitation = std::min(a->restitution(), b->restitution());
 		const float dot_product = velocity[0] * collision_normal[0] + velocity[1] * collision_normal[1];
 	
-		float J = -(1.0 + restitation) * dot_product;
+		float J = -(1.0f + restitation) * dot_product;
         if(a->inv_mass() + b->inv_mass() != 0){
 			J /= a->inv_mass() + b->inv_mass();
 			PVector2D impulse =  collision_normal * J;
@@ -177,7 +171,7 @@ class PEngine {
 			a->velocity(v1 + impulse );
 			b->velocity(v2 - impulse );
 		}
-		std::cout<<"J: "<<J<< " v:"<<a->velocity()<<"\n";
+		//std::cout<<"J: "<<J<< " v:"<<a->velocity()<<"\n";
 		a->round_velocity_to_zero();
 		b->round_velocity_to_zero();
 		return true;

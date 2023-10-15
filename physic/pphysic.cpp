@@ -4,7 +4,7 @@ auto PPhysicObject::are_colliding(std::shared_ptr<PPhysicObject> other, float t,
 	std::shared_ptr<PPhysicObject> drawable = std::make_shared<PPhysicObject>(*this);
 	drawable->update(t * time);
 	if (_collider->collide(drawable->_drawable, other->_drawable)) {
-		other->_collider->collide(other->_drawable, drawable->_drawable);
+		//other->_collider->collide(other->_drawable, drawable->_drawable);
 		return true;
 	}
 	return false;

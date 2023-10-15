@@ -5,7 +5,7 @@ find_package(SDL2 REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-add_compile_options(-Wall -Wextra -Wpedantic -g)
+add_compile_options(-Wall -Wextra -Wpedantic -g )
 add_compile_options(-fsanitize=address)
 link_libraries(-fsanitize=address)
 
