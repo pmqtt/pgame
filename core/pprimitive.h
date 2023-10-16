@@ -97,21 +97,30 @@ struct PRect : public PDrawable {
    public:
 	PRect(float x, float y, float w, float h, bool fill = false,
 		  std::shared_ptr<PDrawStrategy> strategy = std::make_shared<PDrawCartesianStrategy>())
-		: PDrawable(x + w / 2, y + h / 2, fill, strategy), w(w), h(h) {
+		: PDrawable(x + w / 2.0f, y + h / 2.0f, fill, strategy), _rect_x(x),_rect_y(y), _w(w), _h(h) {
         }
 
 	PRect(const PRect& a) 
-        : PDrawable(a.bounding_box()[0][0] +a.w/2,
-                    a.bounding_box()[0][1] +a.h/2,
+        : PDrawable(a.bounding_box()[0][0] +a._w /2.0f,
+                    a.bounding_box()[0][1] +a._h /2.0f,
                     a.fill(),
                     a._strategy) {
-        w = a.w;
-		h = a.h;
+		_w = a._w;
+		_h = a._h;
+	}
+	void width(float w){
+		_w = w;
+		_x = _rect_x + _w /2.0f;
+	}
+
+	void height(float h){
+		_h = h;
+		_y = _rect_y + _h /2.0f;
 	}
 
     auto operator=(const PRect & rhs)-> PRect & {
-        this->w = rhs.w;
-        this->h = rhs.h;
+        this->_w = rhs._w;
+        this->_h = rhs._h;
         this->_x = rhs._x;
         this->_y = rhs._y;
         this->_fill = rhs._fill;
@@ -122,8 +131,8 @@ struct PRect : public PDrawable {
     }
 
 	void draw_fill(std::shared_ptr<SDL_Renderer> renderer) override {
-		for (float y = _y - h / 2; y < _y + h / 2; y += 1) {
-			for (float x = _x - w / 2; x < _x + w / 2; x += 1) {
+		for (float y = _y - _h / 2; y < _y + _h / 2; y += 1.0f) {
+			for (float x = _x - _w / 2; x < _x + _w / 2; x += 1.0f) {
 				const auto point = rotate_point(_x, _y, x, y, degree_to_radian(_angle));
 				draw_point(renderer, point[0], point[1]);
 			}
@@ -131,10 +140,10 @@ struct PRect : public PDrawable {
 	}
 
 	void draw_empty(std::shared_ptr<SDL_Renderer> renderer) override {
-		const auto top_left = rotate_point(_x, _y, _x - w / 2, _y - h / 2, degree_to_radian(_angle));
-		const auto top_right = rotate_point(_x, _y, _x + w / 2, _y - h / 2, degree_to_radian(_angle));
-		const auto bottom_left = rotate_point(_x, _y, _x - w / 2, _y + h / 2, degree_to_radian(_angle));
-		const auto bottom_right = rotate_point(_x, _y, _x + w / 2, _y + h / 2, degree_to_radian(_angle));
+		const auto top_left = rotate_point(_x, _y, _x - _w / 2, _y - _h / 2, degree_to_radian(_angle));
+		const auto top_right = rotate_point(_x, _y, _x + _w / 2, _y - _h / 2, degree_to_radian(_angle));
+		const auto bottom_left = rotate_point(_x, _y, _x - _w / 2, _y + _h / 2, degree_to_radian(_angle));
+		const auto bottom_right = rotate_point(_x, _y, _x + _w / 2, _y + _h / 2, degree_to_radian(_angle));
 		draw_line(renderer, top_left[0], top_left[1], top_right[0], top_right[1]);
 		draw_line(renderer, top_right[0], top_right[1], bottom_right[0], bottom_right[1]);
 		draw_line(renderer, bottom_right[0], bottom_right[1], bottom_left[0], bottom_left[1]);
@@ -143,10 +152,10 @@ struct PRect : public PDrawable {
 
 	auto bounding_box() const -> std::array<PVector2D, 4> override {
 		const float angle_rad = degree_to_radian(_angle);
-		const float x1 = _x - w / 2;
-		const float y1 = _y - h / 2;
-		const float x2 = _x + w / 2;
-		const float y2 = _y + h / 2;
+		const float x1 = _x - _w / 2;
+		const float y1 = _y - _h / 2;
+		const float x2 = _x + _w / 2;
+		const float y2 = _y + _h / 2;
 
 		const auto top_left = rotate_point(_x, _y, x1, y1, angle_rad);
 		const auto top_right = rotate_point(_x, _y, x2, y1, angle_rad);
@@ -157,13 +166,14 @@ struct PRect : public PDrawable {
 	}
 
 	auto bounding_circle() const -> std::array<float, 3> override {
-		return {_x + w / 2, _y + h / 2, std::sqrt(w * w + h * h) / 2};
+		return {_x + _w / 2, _y + _h / 2, std::sqrt(_w * _w + _h * _h) / 2};
 	}
 
 	auto clone() const -> std::shared_ptr<PDrawable> override { return std::make_shared<PRect>(*this); }
 
    private:
-	float w, h;
+	float _rect_x, _rect_y;
+	float _w, _h;
 };
 
 struct PRectIso : public PRect {

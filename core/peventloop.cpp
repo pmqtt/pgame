@@ -14,46 +14,73 @@ void PEventLoop::run() {
 				case SDL_QUIT:
 					_quit = true;
 					break;
-				case SDL_KEYDOWN:
-					for (auto listener : _key_down_listeners) {
+				case SDL_KEYDOWN: {
+					bool is_clicked = false;
+					if (event.key.keysym.sym == SDLK_BACKSPACE) {
+						for (auto& gui_element : _gui_elements) {
+							int x, y;
+							SDL_GetMouseState(&x, &y);
+							if (gui_element.second->is_clicked(x, y)) {
+								PStyle style = gui_element.second->element()->style();
+								if (!gui_element.second->element()->fixed_content()) {
+									if (!style.text->empty()) {
+										style.text->pop_back();
+										gui_element.second->element()->style(style);
+									}
+								}
+								is_clicked = true;
+							}
+						}
+					}
+					if(!is_clicked) {
+						for (const auto& listener : _key_down_listeners) {
+							listener->on_event(this, event);
+						}
+					}
+				}
+				break;
+                case SDL_MOUSEBUTTONDOWN: {
+					bool is_clicked = false;
+					for (auto& gui_element : _gui_elements) {
+						int x, y;
+						SDL_GetMouseState(&x, &y);
+						if (gui_element.second->is_clicked(x, y)) {
+							gui_element.second->on_click();
+							is_clicked = true;
+						}
+					}
+					if (!is_clicked) {
+						for (const auto& listener : _mouse_down_listeners) {
+							listener->on_event(this, event);
+						}
+					}
+				}
+				break;
+				case SDL_MOUSEBUTTONUP: {
+					for(const auto & listener : _mouse_up_listeners){
 						listener->on_event(this, event);
 					}
-                    if(event.key.keysym.sym == SDLK_BACKSPACE){
-                        for( auto & gui_element : _gui_elements){
-                            int x, y;
-                            SDL_GetMouseState(&x, &y);
-                            if(gui_element.second->is_clicked(x,y)){
-                                PStyle style = gui_element.second->element()->style();
-                                if(!gui_element.second->element()->fixed_content()){   
-                                    if(style.text->size() > 0){
-                                        style.text->pop_back();
-                                        gui_element.second->element()->style(style);
-                                    }
-                                }
-                            }
-                        }
-                    }
-					break;
-                case SDL_MOUSEBUTTONDOWN:
-                    for (auto& gui_element : _gui_elements) {
-                        int x, y;
-                        SDL_GetMouseState(&x, &y);
-                        if (gui_element.second->is_clicked(x, y)) {
-                            gui_element.second->on_click();
-                        }
-                    }
-                    break;
-                case SDL_MOUSEMOTION:
-                    for (auto& gui_element : _gui_elements) {
-                        int x, y;
-                        SDL_GetMouseState(&x, &y);
-                        if (gui_element.second->is_clicked(x, y)) {
-                            gui_element.second->hover(true);
-                        }else{
-                            gui_element.second->hover(false);
-                        }
-                    }
-                    break;
+				}
+				break;
+                case SDL_MOUSEMOTION: {
+					bool is_clicked = false;
+					for (auto& gui_element : _gui_elements) {
+						int x, y;
+						SDL_GetMouseState(&x, &y);
+						if (gui_element.second->is_clicked(x, y)) {
+							gui_element.second->hover(true);
+							is_clicked = true;
+						} else {
+							gui_element.second->hover(false);
+						}
+					}
+					if(!is_clicked) {
+						for (auto& listener : _mouse_move_listeners) {
+							listener->on_event(this, event);
+						}
+					}
+				}
+				break;
                 case SDL_TEXTINPUT:{
                     std::string s = event.text.text;
                     for( auto & gui_element : _gui_elements){

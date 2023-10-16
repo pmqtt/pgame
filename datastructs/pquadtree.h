@@ -182,7 +182,7 @@ class PQuadtree{
         }
         void print(){
             _printer.indent();
-            for(int i = 0; i < _objects.size(); ++i){
+            for(std::size_t i = 0; i < _objects.size(); ++i){
                 _printer.print("name:"+_objects[i]->name());
             }
             if(_nodes[NW]){

@@ -1,7 +1,7 @@
 #include "pcollider.h"
 
 auto PBoxCollider::collide(std::shared_ptr<PDrawable> p1, std::shared_ptr<PDrawable> p2) const -> bool {
-    const auto box1 = p1->bounding_box();  // array of x,y,w,h
+    const auto box1 = p1->bounding_box();  // array of x,y,_w,h
     const auto box2 = p2->bounding_box();
 
     // Berechne die Seiten des Rechtecks A
@@ -12,7 +12,7 @@ auto PBoxCollider::collide(std::shared_ptr<PDrawable> p1, std::shared_ptr<PDrawa
 
     // Berechne die Seiten des Rechtecks B
     const float leftB = box2[0][0];	   // x
-    const float rightB = box2[0][1];   // x+w
+    const float rightB = box2[0][1];   // x+_w
     const float topB = box2[0][1];	   // y
     const float bottomB = box2[2][1];  // y+h
 

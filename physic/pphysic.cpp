@@ -1,33 +1,36 @@
 #include "pphysic.h"
 
-auto PPhysicObject::are_colliding(std::shared_ptr<PPhysicObject> other, float t, float time) -> bool {
+auto PPhysicObject::are_colliding(const std::shared_ptr<PPhysicObject>& other, float t, float time) -> bool {
 	std::shared_ptr<PPhysicObject> drawable = std::make_shared<PPhysicObject>(*this);
 	drawable->update(t * time);
 	if (_collider->collide(drawable->_drawable, other->_drawable)) {
-		//other->_collider->collide(other->_drawable, drawable->_drawable);
 		return true;
 	}
 	return false;
 }
 
-auto PPhysicObject::compute_toi(std::shared_ptr<PPhysicObject> other, float time) -> float {
+auto PPhysicObject::compute_toi(const std::shared_ptr<PPhysicObject>& other, float time) -> float {
 	if (_collider) {
+		if(are_colliding(other, 0.0f, time)){
+			std::cout<<"are colliding at t=0\n";
+			return 0.0f;
+		}
 		float low = 0;
 		float high = 1;	 // Assuming we are checking for TOI within the next frame, which is normalized to [0, 1]
-		bool exist_colision = false;
+		bool exist_collision = false;
 		while (high - low > EPSILON) {
-			float mid = (low + high) / 2.0;
+			float mid = (low + high) / 2.0f;
 			if (are_colliding(other, mid, time)) {
-				exist_colision = true;
+				exist_collision = true;
 				high = mid;
 			} else {
 				low = mid;
 			}
 		}
-		if (!exist_colision) {
+		if (!exist_collision) {
 			return -1.0;
 		}
-		float res = (low + high) / 2.0;
+		float res = (low + high) / 2.0f;
 		return res;
 	}
 	return -1.0;

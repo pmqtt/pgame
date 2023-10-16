@@ -77,9 +77,9 @@ class PPhysicObject : public std::enable_shared_from_this<PPhysicObject> {
 	void restitution(float value) { _restition = value; }
 	auto restitution() const -> float { return _restition; }
 
-	auto are_colliding(std::shared_ptr<PPhysicObject> other, float t, float time) -> bool ;
+	auto are_colliding(const std::shared_ptr<PPhysicObject>& other, float t, float time) -> bool ;
 
-	auto compute_toi(std::shared_ptr<PPhysicObject> other, float time) -> float ;
+	auto compute_toi(const std::shared_ptr<PPhysicObject>& other, float time) -> float ;
 
 	void move(float delta_time);
 

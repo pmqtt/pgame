@@ -5,9 +5,9 @@ find_package(SDL2 REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-add_compile_options(-Wall -Wextra -Wpedantic -g )
-add_compile_options(-fsanitize=address)
-link_libraries(-fsanitize=address)
+add_compile_options(-Wall -Wextra -Wpedantic -O3 )
+#add_compile_options(-fsanitize=address)
+#link_libraries(-fsanitize=address)
 
 set(CURRENT_CMAKE_FILE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(ENGINE_PATH "${CURRENT_CMAKE_FILE_DIR}")
@@ -74,6 +74,7 @@ add_core_test(core_test_0008)
 
 # GUI TESTS
 add_core_test(gui_test_0001)
+add_core_test(gui_test_0002)
 
 # GAME TESTS
 add_game_test(tennis)

@@ -45,12 +45,12 @@ class PEngine {
 	PEngine() = default;
 	~PEngine() = default;
 
-	void add_physic_object(const std::string& name, std::shared_ptr<PPhysicObject> physic) {
+	void add_physic_object(const std::string& name, const std::shared_ptr<PPhysicObject> & physic) {
 		physic->name(name);
 		_physic_objects[name] = physic;
 	}
 
-	void add_moveable(const std::string &name, std::shared_ptr<PMoveable> moveable) {
+	void add_moveable(const std::string &name, const std::shared_ptr<PMoveable> &moveable) {
 		_moveable_objects[name] = moveable;
 	}
 
@@ -132,7 +132,7 @@ class PEngine {
 	}
 
 
-	auto handle_collision(std::shared_ptr<PPhysicObject> &a, std::shared_ptr<PPhysicObject> &b, float delta_time) -> bool {
+	static auto handle_collision( std::shared_ptr<PPhysicObject> &a, std::shared_ptr<PPhysicObject> &b, float delta_time) -> bool {
 		P_UNUSED(delta_time);
 		if(0){
 			std::cout<<"\t\t\t\tHandle collisions: "<<a<<"\n";
