@@ -132,7 +132,7 @@ auto PSatCollider::collide(std::shared_ptr<PDrawable> p1, std::shared_ptr<PDrawa
 }
 
 auto PSatCollider::overlapAmount(const PVector2D &axis, const PVertices2D &shape1, const PVertices2D &shape2) const -> float {
-    float min1 = std::numeric_limits<float>::max();
+	float min1 = std::numeric_limits<float>::max();
     float max1 = std::numeric_limits<float>::min();
     for (const auto &point : shape1) {
         float projection = dot(axis, point);

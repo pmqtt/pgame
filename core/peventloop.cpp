@@ -113,29 +113,27 @@ void PEventLoop::run() {
            }
         }
 
-		SDL_SetRenderDrawColor(_renderer.get(), 0, 0, 0, 255);
-		SDL_RenderClear(_renderer.get());
-        
-        _engine.simulate_step(_delta_time);
-        
-		for (auto& moveable : _moveables) {
+	   SDL_SetRenderDrawColor(_renderer.get(), 0, 0, 0, 255);
+	   SDL_RenderClear(_renderer.get());
+	   _engine.simulate_step(_delta_time);
+	   for (auto& moveable : _moveables) {
 			moveable.second->draw(_renderer);
-		}
-		for (auto& animation : _animations) {
+	   }
+	   for (auto& animation : _animations) {
 			animation.second->draw(this, _renderer);
-		}
-        for (auto& gui_element : _gui_elements) {
-            gui_element.second->draw(_renderer);
-        }
+	   }
+	   for (auto& gui_element : _gui_elements) {
+			gui_element.second->draw(_renderer);
+	   }
+
+	   SDL_RenderPresent(_renderer.get());
+	   int delay = (1000.0f / 60.0f) - (_delta_time * 1000.0f);
+	   if (delay > 0) {
+			std::cout<<"_delta_time:"<<_delta_time<< "wait for "<<delay<<"ms\n";
+		   SDL_Delay(delay);
+	   }
 
 
-		SDL_RenderPresent(_renderer.get());
-
-		int delay = (1000.0f / 60.0f) - (_delta_time * 1000.0f);
-		if (delay > 0) {
-			SDL_Delay(delay);
-		}
-        //stop();
 	}
     std::exit(0);
 }

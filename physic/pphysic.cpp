@@ -12,7 +12,6 @@ auto PPhysicObject::are_colliding(const std::shared_ptr<PPhysicObject>& other, f
 auto PPhysicObject::compute_toi(const std::shared_ptr<PPhysicObject>& other, float time) -> float {
 	if (_collider) {
 		if(are_colliding(other, 0.0f, time)){
-			std::cout<<"are colliding at t=0\n";
 			return 0.0f;
 		}
 		float low = 0;

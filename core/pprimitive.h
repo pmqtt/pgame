@@ -25,6 +25,7 @@ struct PDrawable {
 		_changed = a._changed;
 		_angle = a._angle;
 	}
+	virtual ~PDrawable() = default;
 
 
 	void draw(std::shared_ptr<SDL_Renderer> renderer) {
@@ -55,9 +56,9 @@ struct PDrawable {
 	virtual void draw_empty(std::shared_ptr<SDL_Renderer> renderer) = 0;
 
 	void draw_line(std::shared_ptr<SDL_Renderer> renderer, float x1, float y1, float x2, float y2) {
-		_strategy->draw_line(renderer, x1, y1, x2, y2);
+		_strategy->draw_line(std::move(renderer), x1, y1, x2, y2);
 	}
-	void draw_point(std::shared_ptr<SDL_Renderer> renderer, float x, float y) { _strategy->draw_point(renderer, x, y); }
+	void draw_point(std::shared_ptr<SDL_Renderer> renderer, float x, float y) { _strategy->draw_point(std::move(renderer), x, y); }
 
 	void change_color(const std::array<unsigned char, 4>& color) { _color = color; }
 

@@ -20,26 +20,32 @@ class PButton;
 class PEventLoop;
 
 struct PEventListener {
+	virtual ~PEventListener() = default;
 	virtual void on_event(PEventLoop* loop, SDL_Event event) = 0;
 };
 
 struct PKeyDownListener {
+	virtual ~PKeyDownListener() = default;
 	virtual void on_event(PEventLoop* loop, SDL_Event event) = 0;
 };
 
 struct PMouseDownListener {
+	virtual ~PMouseDownListener() = default;
 	virtual void on_event(PEventLoop* loop, SDL_Event event) = 0;
 };
 
 struct PMouseUpListener {
+	virtual ~PMouseUpListener() = default;
 	virtual void on_event(PEventLoop* loop, SDL_Event event) = 0;
 };
 
 struct PMouseMoveListener {
+	virtual ~PMouseMoveListener() = default;
 	virtual void on_event(PEventLoop* loop, SDL_Event event) = 0;
 };
 
 struct PCollisionListener{
+	virtual ~PCollisionListener() = default;
     virtual void on_event(PEventLoop* loop,const PCollisionItem & item, std::shared_ptr<PPhysicObject> object1, std::shared_ptr<PPhysicObject> object2) = 0;
 };
 

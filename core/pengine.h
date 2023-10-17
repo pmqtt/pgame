@@ -83,7 +83,7 @@ class PEngine {
 				bool should_break = false;
 				for (auto & candidate : candidates) {
 					if (obj.second != candidate) {
-						if(last_collisions.size() > 0){
+						if(!last_collisions.empty()){
 							for(auto & last_collision : last_collisions){
 								if(last_collision.first == obj.second && last_collision.second == candidate){
 									should_break = true;

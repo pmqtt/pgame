@@ -46,8 +46,11 @@ public:
         std::string text = *_style.text;
         std::array<unsigned char, 4> font_color = *_style.font_color;
         SDL_Color text_color = {font_color[0],font_color[1],font_color[2],font_color[3]};
+
         SDL_Surface* text_surface = TTF_RenderText_Solid(_font->font(), text.c_str(), text_color);
-        SDL_Texture* text_texture = SDL_CreateTextureFromSurface(renderer.get(), text_surface);
+		SDL_Texture* text_texture = nullptr;
+		text_texture = SDL_CreateTextureFromSurface(renderer.get(), text_surface);
+
         float text_width = text_surface->w;
         float text_height = text_surface->h;
         auto box = _rect.bounding_box();
@@ -73,7 +76,10 @@ public:
 
         // Cleanup
         SDL_FreeSurface(text_surface);
-        SDL_DestroyTexture(text_texture);
+		if(text_texture != nullptr) {
+			SDL_DestroyTexture(text_texture);
+			text_texture = nullptr;
+		}
     }
 
     void on_click() override{
