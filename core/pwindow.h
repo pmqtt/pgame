@@ -5,6 +5,11 @@
 #include <memory>
 #include <string>
 
+enum class WINDOW_TYPE{
+	SDL,
+	VULKAN
+};
+
 class PEventLoop;
 
 struct SDLWindowDeleter {
@@ -33,7 +38,7 @@ class PWindow {
 		_renderer.reset();
 		SDL_Quit();
 	}
-
+	[[nodiscard]] auto type() const -> WINDOW_TYPE { return _type; }
 	PEventLoop create_event_loop();
 
    private:
@@ -42,6 +47,8 @@ class PWindow {
 	unsigned int _flags;
 	std::shared_ptr<SDL_Window> _window;
 	std::shared_ptr<SDL_Renderer> _renderer;
+	WINDOW_TYPE _type;
+
 };
 
 #endif

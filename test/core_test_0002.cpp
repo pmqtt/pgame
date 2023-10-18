@@ -31,7 +31,6 @@ auto main(int argc, char** argv) -> int {
 	auto gravity = std::make_shared<PGravity>(PVector2D{0.0,98.1});
 	object->add_force(gravity);
 	object->is_static(false);
-	event_loop.enable_physic_simulation();
 	event_loop.add_physics_object("obj", object);
 	auto object2 = std::make_shared<PPhysicObject>(std::make_shared<PRect>(0, 510, 800, 100, false),std::make_shared<PSatCollider>());
 	event_loop.add_physics_object("obj2", object2);

@@ -101,10 +101,10 @@ class PEventLoop {
 
 	void resume();
 
-	void enable_physic_simulation() { should_use_physic_engine = true; }
+	void use_vulkan() { _use_vulkan = true; }
 
    private:
-    bool should_use_physic_engine = false;
+    bool _use_vulkan = false;
 	bool _quit;
 	std::list<SDL_Event> _events;
 	std::list<std::shared_ptr<PKeyDownListener>> _key_down_listeners;

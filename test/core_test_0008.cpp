@@ -41,7 +41,6 @@ auto main(int argc, char** argv) -> int {
 	}
 	auto object2 = std::make_shared<PPhysicObject>(std::make_shared<PRect>(0, 510, 800, 100, false),std::make_shared<PSatCollider>());
 	event_loop.add_physics_object("obj2", object2);
-	event_loop.enable_physic_simulation();
 	event_loop.run();
 	return 0;
 }
